@@ -12,18 +12,23 @@ Features not specifically tested:
 - QSPI Flash
 - anything else I have missed
 
-## Building under Visual Studio Code
+## Example application
+This repository includes blinky.cpp as an example application to demonstrate how to use the Adafruit nrf52840 Feather custom board. It's expected to work out of the box using both Mbed CLI and Mbed Studio. Note this test application can be ignored using the MBED_BLINKY_EXAMPLE macro in mbed_app.json, so you can add your own files and application on top of this project.
+
+You can follow these steps to import and compile with Mbed CLI:
+
+```text
+mbed import https://github.com/winneymj/mbed-os-adafruit-nrf52840-feather.git
+mbed compile -t GCC_ARM -m ADAFRUIT-NRF52840-FEATHER
+```
+
+## Building and Flash board in Visual Studio Code
 
 **prerequisites:**
 
-- mbed-os CLI installed
 - python3
 
 **Installation (Windows only):**
-
-- Download and install arm gcc compiler 9-2020-q2-update (or later)
-  
-https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-win32.exe?revision=50c95fb2-67ca-4df7-929b-55396266b4a1&la=en&hash=DE1CD6E7A15046FD1ADAF828EA4FA82228E682E2
 
 - Install adafruit-nrfutil
 ```text
@@ -31,14 +36,8 @@ pip3 install --user adafruit-nrfutil
 ```
 - Locate the adafruit-nrfutil.exe and add to path
 
-- Create empty Mbed-os project.
-
-- Install latest mbed-os from VS Code terminal
-```text
-mbed add https://github.com/ARMmbed/mbed-os.git
-```
-
-- update VS Code tasks.json to include following configuration inside the **tasks** array:
+**To build and flash under Visual Studio Code**
+- update Visual Studio Code tasks.json to include following configuration inside the **tasks** array:
 ```json
     "tasks": [
         {
@@ -107,16 +106,6 @@ mbed add https://github.com/ARMmbed/mbed-os.git
         }
     ]
 ``` 
-- Set target in .mbed file to:
-```text
-TARGET=ADAFRUIT_NRF52840_FEATHER
-```
-File should look like something of the form:
-```text
-TOOLCHAIN=GCC_ARM
-TARGET=ADAFRUIT_NRF52840_FEATHER
-ROOT=.
-```
 
 ## Compiling and Building
 
