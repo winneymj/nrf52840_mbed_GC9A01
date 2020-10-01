@@ -5,6 +5,9 @@
 #ifdef MBED_BLINKY_EXAMPLE
 #ifndef MBED_TEST_MODE
 #include "mbed.h"
+// Comment in the USBConsole.h include below to send printf output back through USB to computer.
+// Open serial terminal session on COM port using terminal program such as Putty to see output 
+//#include "USBConsole.h"  
  
 // Blinking rate in milliseconds
 #define BLINKING_RATE_MS     500

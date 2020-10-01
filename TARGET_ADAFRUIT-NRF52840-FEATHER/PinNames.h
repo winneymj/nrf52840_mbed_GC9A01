@@ -221,11 +221,11 @@ typedef enum {
 
     D0 = NC,
     D1 = NC,
-    D2  = PIN_NFC2,
+    D2 = PIN_NFC2,
     D3 = NC,
     D4 = NC,
-    D5  = p40,
-    D6  = p7,
+    D5 = p40,
+    D6 = p7,
     D7 = NC,
     D8 = NC,
 

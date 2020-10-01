@@ -8,8 +8,8 @@
           "platform.stdio-convert-newlines"   : true,
           "platform.stdio-buffered-serial"    : true,
           "platform.stdio-flush-at-exit"      : true,
-          "crash-capture-enabled": true,
-          "fatal-error-auto-reboot-enabled": true
+          "platform.crash-capture-enabled"    : true,
+          "platform.fatal-error-auto-reboot-enabled": true
     }
   }
 }

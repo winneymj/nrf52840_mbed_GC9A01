@@ -1,29 +1,18 @@
 {
-  "ADAFRUIT_NRF52840_FEATHER": {
-    "supported_form_factors": [
-        "ARDUINO"
-    ],
-    "inherits": [
-        "MCU_NRF52840"
-    ],
-    "macros_add": [
-        "CONFIG_GPIO_AS_PINRESET"
-    ],
-    "extra_labels_remove": [
-        "SOFTDEVICE_NONE"
-    ],
-    "extra_labels_add": [
-        "SOFTDEVICE_COMMON",
-        "SOFTDEVICE_S140_FULL"
-    ],
+  "ADAFRUIT-NRF52840-FEATHER": {
+    "release_versions": ["5"],
+    "device_name": "nRF52840_xxAA",
+    "supported_form_factors": ["ARDUINO"],
+    "inherits": ["MCU_NRF52840"],
+    "macros_add": ["CONFIG_GPIO_AS_PINRESET"],
+    "extra_labels_remove": ["SOFTDEVICE_NONE"],
+    "extra_labels_add": ["SOFTDEVICE_COMMON", "SOFTDEVICE_S140_FULL"],
+    "device_has_add": ["FLASH"],
     "config": {
         "enable-objects-extensions": {
             "help": "Enable inclusion of objects_extensions.h",
             "value": false
         }
-    },
-    "supported_application_profiles": [
-        "full", "bare-metal"
-    ]
+    }
   }
 }
