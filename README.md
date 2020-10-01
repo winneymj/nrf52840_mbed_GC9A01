@@ -1,6 +1,8 @@
 # Adafruit Feather nRF52840 Express
 This is a beta release of support for the Adafruit Feather nRF52840 Express (https://www.adafruit.com/product/4062)
 
+**Supported mbed-os version:** 6.3.0
+
 The following features have been tested:
 - LED's
 - SPI and SPIM
