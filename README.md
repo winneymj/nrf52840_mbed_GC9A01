@@ -21,7 +21,7 @@ You can follow these steps to import and compile with Mbed CLI:
 
 ```text
 mbed import https://github.com/winneymj/mbed-os-adafruit-nrf52840-feather.git
-mbed compile -t GCC_ARM -m ADAFRUIT-NRF52840-FEATHER
+mbed compile -t GCC_ARM -m ADAFRUIT-_NRF52840_FEATHER
 ```
 
 ## Building and Flash board in Visual Studio Code

@@ -1,7 +1,5 @@
 {
-  "macros": [
-      "MBED_BLINKY_EXAMPLE=1"
-  ],
+  "macros": [],
   "target_overrides": {
       "*": {
           "platform.stdio-baud-rate"          : 115200,

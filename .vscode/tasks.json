@@ -1,0 +1,71 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "compile release",
+      "group": "build",
+      "command": "mbed",
+      "args": [
+          "compile",
+          "--profile=release",
+          "-v",
+          "-t",
+          "GCC_ARM",
+          "-m",
+          "ADAFRUIT_NRF52840_FEATHER"
+      ]
+    },
+    {
+        "label": "ada-nrfutil app hex to DFU zip",
+        "group": "build",
+        "command": "adafruit-nrfutil",
+        "args": [
+            "dfu",
+            "genpkg",
+            "--dev-type",
+            "0x0052",
+            "--sd-req",
+            "0x00B6",
+            "--application",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex.zip"
+        ],
+        "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": true,
+            "clear": false
+        },
+    },
+    {
+        "label": "ada-nrfutil flash DFU pkg",
+        "group": "build",
+        "command": "adafruit-nrfutil",
+        "args": [
+            "--verbose",
+            "dfu",
+            "serial",
+            "-pkg",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex.zip",
+            "-p",
+            "COM7",
+            "-b",
+            "115200",
+            "--singlebank"
+        ]
+    },
+    {
+        "label": "Build Release",
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        },
+        "dependsOrder": "sequence",
+        "dependsOn": ["compile release", "ada-nrfutil app hex to DFU zip", "ada-nrfutil flash DFU pkg"]
+    }
+  ]
+}

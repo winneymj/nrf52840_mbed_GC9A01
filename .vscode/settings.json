@@ -1,0 +1,12 @@
+{
+    "C_Cpp.errorSquiggles": "Enabled",
+    "files.associations": {
+        "vector": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "stdbool.h": "c",
+        "cmath": "cpp",
+        "ostream": "cpp",
+        "*.cpp_example_spim": "cpp"
+    }
+}

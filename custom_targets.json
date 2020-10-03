@@ -1,5 +1,5 @@
 {
-  "ADAFRUIT-NRF52840-FEATHER": {
+  "ADAFRUIT_NRF52840_FEATHER": {
     "release_versions": ["5"],
     "device_name": "nRF52840_xxAA",
     "supported_form_factors": ["ARDUINO"],
