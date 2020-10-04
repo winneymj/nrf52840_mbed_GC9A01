@@ -13,6 +13,7 @@ This assumes you have the mbed CLI installed and are able to build and compile u
 ```text
 mbed update
 ```
+- Rename the lv_drivers/GC9A01.c to GC9A01.cpp.  This is because the driver needs to include the **mbed.h** header file and only C++ files can do this.
 - compile the codeby entering command
 ```text
 mbed compile -t GCC_ARM -m ADAFRUIT_NRF52840_FEATHER
