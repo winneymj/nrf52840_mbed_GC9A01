@@ -2,7 +2,7 @@
 #define __COMMON_H__
 
 #include <mbed.h>
-#include <../../lv_drv_conf.h>
+#include <lv_drv_conf.h>
 
 // /* GLOBAL PINSSSSSS */
 #if GC9A01_SPI_BITS == 8
