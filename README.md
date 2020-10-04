@@ -1,30 +1,24 @@
-# Adafruit Feather nRF52840 Express
-This is a beta release of support for the Adafruit Feather nRF52840 Express (https://www.adafruit.com/product/4062)
+# Project for Adafruit Feather nRF52840 Express and round GC9A01 display
+BOM:
+- Adafruit Feather nRF52840 Express - (https://www.adafruit.com/product/4062)
+- 1.28'' IPS TFT LCD Display 240x240 Round Circle Screen for Smart Watch - (https://www.buydisplay.com/1-28-inch-tft-lcd-display-240x240-round-circle-screen-for-smart-watch)
 
-**Supported mbed-os version:** 6.3.0
-
-The following features have been tested:
-- LED's
-- SPI and SPIM
-- Console output
-
-Features not specifically tested:
-- I2C
-- QSPI
-- QSPI Flash
-- anything else I have missed
-
-## Example application
-This repository includes blinky.cpp as an example application to demonstrate how to use the Adafruit nrf52840 Feather custom board. It's expected to work out of the box using both Mbed CLI and Mbed Studio. Note this test application can be ignored using the MBED_BLINKY_EXAMPLE macro in mbed_app.json, so you can add your own files and application on top of this project.
-
-You can follow these steps to import and compile with Mbed CLI:
-
+# Building this repo
+## Prerequisite
+This assumes you have the mbed CLI installed and are able to build and compile using the ARM GCC.
+## Steps
+- Clone repo
+- cd into cloned directory
+- Open CMD or powershell window and enter command below to clone mbed-os, lvgl and lvgl_drivers
 ```text
-mbed import https://github.com/winneymj/mbed-os-adafruit-nrf52840-feather.git
-mbed compile -t GCC_ARM -m ADAFRUIT-_NRF52840_FEATHER
+mbed update
 ```
-
-## Building and Flash board in Visual Studio Code
+- compile the codeby entering command
+```text
+mbed compile -t GCC_ARM -m ADAFRUIT_NRF52840_FEATHER
+```
+## Flashing to Adafruit board 
+Flashing the code to the board requires using the **adafruit-nrfutil**.
 
 **prerequisites:**
 
@@ -37,7 +31,15 @@ mbed compile -t GCC_ARM -m ADAFRUIT-_NRF52840_FEATHER
 pip3 install --user adafruit-nrfutil
 ```
 - Locate the adafruit-nrfutil.exe and add to path
-
+- Convert hex file to DFU zip by replacing &lt;clone&gt; with clone directory name and entering command:
+```text
+adafruit-nrfutil dfu genpkg --dev-type 0x0052 --sd-req 0x00B6 --application .\BUILD\ADAFRUIT_NRF52840_FEATHER\GCC_ARM\<clone>_application.hex .\BUILD\ADAFRUIT_NRF52840_FEATHER\GCC_ARM\<clone>_application.hex.zip
+```
+- Flash zip file to board using command:
+```text
+adafruit-nrfutil --verbose dfu serial -pkg .\BUILD\ADAFRUIT_NRF52840_FEATHER\GCC_ARM\<clone>_application.hex.zip -p COM7 -b 115200 --singlebank
+```
+## Building and Flash board in Visual Studio Code
 **To build and flash under Visual Studio Code**
 - update Visual Studio Code tasks.json to include following configuration inside the **tasks** array:
 ```json
