@@ -1,10 +1,9 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
 
 #include <mbed.h>
-#include <lv_drv_conf.h>
+#include "lv_drv_conf.h"
+#include "common.h"
 
-// /* GLOBAL PINSSSSSS */
+/* GLOBAL PINSSSSSS */
 #if GC9A01_SPI_BITS == 8
 DigitalOut cmd_data(P0_6);
 #endif
@@ -27,18 +26,6 @@ DigitalOut spi_sck(SPI_PSELSCK0);
 #if GC9A01_SPI_EXT_CS
 DigitalOut spi_cs(SPI_PSELSS0);
 #endif
-
-// /* FNC PROTOTYPES */
-void pin_rst_set(int); // set reset pin to a value
-void pin_cmd_set(int); // set cmd dta pin to a value
-void spi_cs_set(int); // setting chip select pin to a value
-void spi_wr(int); // write a byte over spi
-void spi_wr_mem(char *, int);
-// void spi_wr_mem(uint32_t, uint32_t); // not correct 
-void spi_set_freq(int); // set baudrate
-void spi_mode(int, int);
-void delay_ms(int);
-void delay_us(int);
 
 void pin_rst_set(int val) {
 	reset = val;
@@ -127,5 +114,3 @@ void delay_ms(int val) {
 void delay_us(int val) {
   wait_us(val);
 }
-
-#endif
