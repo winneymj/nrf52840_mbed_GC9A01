@@ -5,18 +5,22 @@
 
 /* GLOBAL PINSSSSSS */
 #if GC9A01_SPI_BITS == 8
-DigitalOut cmd_data(P0_6);
+DigitalOut cmd_data(P0_29); // MDBT50Q-DB board
+// DigitalOut cmd_data(P0_6); // Adafruit
 #endif
 #if GC9A01_SPI_BITS == 9
 uint8_t cmd_data;
 #endif
-DigitalOut reset(P0_7);
+DigitalOut reset(P1_10); // MDBT50Q-DB board
+// DigitalOut reset(P0_7); // Adafruit
 
 #if GC9A01_SPI_BITS == 8
 # if GC9A01_SPI_EXT_CS
+// SPI spi(P1_13, NC, P1_12, NC);  // MDBT50Q-DB board
 SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, NC);
 # else
-SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, SPI_PSELSS0);
+SPI spi(P1_11, NC, P1_13, P1_15); // MDBT50Q-DB board
+// SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, SPI_PSELSS0); // Adafruit
 # endif
 #endif
 #if GC9A01_SPI_BITS == 9

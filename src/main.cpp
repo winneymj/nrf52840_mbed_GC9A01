@@ -4,7 +4,7 @@
  */
 
 #include "mbed.h"
-#include "USBConsole.h"
+// #include "USBConsole.h"
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
 // enum etick_units {
@@ -33,7 +33,7 @@ static int32_t sHours = 4;
 static int32_t sMinutes = 45;
 
 Ticker ticker;
-DigitalOut led1(LED_RED);
+DigitalOut led1(P0_25);
 
 /**********************
  *  STATIC VARIABLES
@@ -305,7 +305,8 @@ int main()
   // while(true) {
     // Initalize the display driver GC9A01
     GC9A01_init();
-  //   wait_us(1000 * 100);
+    wait_us(1000 * 100);
+    // led1 = !led1;
   // }
 
   printf("main: GC9A01_init() done\r\n");

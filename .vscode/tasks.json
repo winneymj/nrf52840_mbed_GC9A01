@@ -18,6 +18,24 @@
       ]
     },
     {
+        "label": "nrfutil app hex to DFU zip",
+        "group": "build",
+        "command": "nrfutil",
+        "args": [
+            "pkg",
+            "generate",
+            "--hw-version",
+            "52",
+            "--sd-req",
+            "0x00A9",
+            "--application-version",
+            "0xFF",
+            "--application",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex.zip"
+        ]
+    },
+    {
         "label": "ada-nrfutil app hex to DFU zip",
         "group": "build",
         "command": "adafruit-nrfutil",
@@ -59,13 +77,30 @@
         ]
     },
     {
+        "label": "nrfutil flash DFU pkg",
+        "group": "build",
+        "command": "nrfutil",
+        "args": [
+            "--verbose",
+            "dfu",
+            "usb-serial",
+            "-pkg",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex.zip",
+            "-p",
+            "COM11",
+            "-b",
+            "115200"
+        ]
+    },
+    {
         "label": "Build Release",
         "group": {
             "kind": "build",
             "isDefault": true
         },
         "dependsOrder": "sequence",
-        "dependsOn": ["compile release", "ada-nrfutil app hex to DFU zip", "ada-nrfutil flash DFU pkg"]
+        // "dependsOn": ["compile release", "ada-nrfutil app hex to DFU zip", "ada-nrfutil flash DFU pkg"]
+        "dependsOn": ["compile release", "nrfutil app hex to DFU zip", "nrfutil flash DFU pkg"]
     }
   ]
 }

@@ -3,9 +3,16 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/mbed-os",
-                "${workspaceFolder}/mbed-os/platform/include"
+                "${workspaceFolder}\\**",
+                "${workspaceFolder}\\mbed-os",
+                "${workspaceFolder}\\mbed-os\\platform\\include",
+                "${workspaceFolder}\\mbed-os\\hal\\include",
+                "${workspaceFolder}\\TARGET_ADAFRUIT_NRF52840_FEATHER",
+                "${workspaceFolder}\\mbed-os\\hal\\include\\hal",
+                "${workspaceFolder}\\mbed-os\\drivers\\include",
+                "${workspaceFolder}\\mbed-os\\drivers\\include\\drivers",
+                "C:/Users/dell/Documents/mbedos5/nrf52840_mbed_GC9A01/mbed-os/drivers/include/drivers",
+                "C:/Users/dell/Documents/mbedos5/nrf52840_mbed_GC9A01/TARGET_ADAFRUIT_NRF52840_FEATHER"
             ],
             "defines": [
                 "_DEBUG",
