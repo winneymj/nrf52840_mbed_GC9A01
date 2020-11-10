@@ -33,7 +33,8 @@ static int32_t sHours = 4;
 static int32_t sMinutes = 45;
 
 Ticker ticker;
-DigitalOut led1(P0_25);
+// DigitalOut VibMotor(P0_12);
+PwmOut VibMotor(P0_12);
 
 /**********************
  *  STATIC VARIABLES
@@ -302,11 +303,27 @@ int main()
 {
   printf("main: ENTER\r\n");
 
+  // float brightness = 0.5f;
+  // float addition = 0.001;
+  // VibMotor.period(0.010f); // 1 second period
+
   // while(true) {
     // Initalize the display driver GC9A01
     GC9A01_init();
-    wait_us(1000 * 100);
-    // led1 = !led1;
+
+    // Do a led pwm bright to dim and to bright START
+    // VibMotor.write(brightness); // 50% duty cycle
+
+    // brightness += addition;
+
+    // if (brightness <= 0.0) {
+    //   addition = 0.0001;
+    // }
+    // if (brightness >= 1.0) {
+    //   addition = -0.0001;
+    // }
+    // wait_us(500);
+    // Do a led pwm bright to dim and to bright END
   // }
 
   printf("main: GC9A01_init() done\r\n");

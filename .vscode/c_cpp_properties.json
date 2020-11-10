@@ -7,12 +7,17 @@
                 "${workspaceFolder}\\mbed-os",
                 "${workspaceFolder}\\mbed-os\\platform\\include",
                 "${workspaceFolder}\\mbed-os\\hal\\include",
-                "${workspaceFolder}\\TARGET_ADAFRUIT_NRF52840_FEATHER",
                 "${workspaceFolder}\\mbed-os\\hal\\include\\hal",
                 "${workspaceFolder}\\mbed-os\\drivers\\include",
                 "${workspaceFolder}\\mbed-os\\drivers\\include\\drivers",
-                "C:/Users/dell/Documents/mbedos5/nrf52840_mbed_GC9A01/mbed-os/drivers/include/drivers",
-                "C:/Users/dell/Documents/mbedos5/nrf52840_mbed_GC9A01/TARGET_ADAFRUIT_NRF52840_FEATHER"
+                "${workspaceFolder}\\TARGET_ADAFRUIT_NRF52840_FEATHER",
+                "${workspaceFolder}\\mbed-os/drivers/include/drivers",
+                "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\9 2020-q2-update\\arm-none-eabi\\include",
+                "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\9 2020-q2-update\\arm-none-eabi\\include\\c++\\9.3.1",
+                "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\9 2020-q2-update\\lib\\gcc\\arm-none-eabi\\9.3.1\\include",
+                "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\9 2020-q2-update\\arm-none-eabi\\include\\c++\\9.3.1",
+                "C:/Program Files (x86)/GNU Arm Embedded Toolchain/9 2020-q2-update/arm-none-eabi/include/c++/9.3.1/arm-none-eabi",
+                "C:/Program Files (x86)/GNU Arm Embedded Toolchain/9 2020-q2-update/arm-none-eabi/include"
             ],
             "defines": [
                 "_DEBUG",

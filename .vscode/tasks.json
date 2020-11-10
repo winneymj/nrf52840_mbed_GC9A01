@@ -87,7 +87,7 @@
             "-pkg",
             "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-RELEASE\\${workspaceFolderBasename}_application.hex.zip",
             "-p",
-            "COM11",
+            "COM3",
             "-b",
             "115200"
         ]
