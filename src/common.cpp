@@ -31,6 +31,9 @@ DigitalOut spi_sck(SPI_PSELSCK0);
 DigitalOut spi_cs(SPI_PSELSS0);
 #endif
 
+// BMA423 Accelerator
+I2C i2c(P0_26, P0_5);
+
 void pin_rst_set(int val) {
 	reset = val;
 }
@@ -109,6 +112,13 @@ void spi_set_freq(int val)
 #if GC9A01_SPI_BITS == 8
 	spi.frequency(val);
 #endif
+}
+
+// write a single byte but mbed I2C write doesnt have one for writing
+// a single byte so we just write it as a 32 bits integer
+void i2c_wr(int data)
+{
+	i2c.write(data);
 }
 
 void delay_ms(int val) {

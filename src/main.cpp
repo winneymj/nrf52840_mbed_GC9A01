@@ -7,6 +7,7 @@
 // #include "USBConsole.h"
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
+#include <BMA42X-Sensor-Driver/BMA423.h>
 // enum etick_units {
 //   SECOND_UNIT
 // };
@@ -33,7 +34,6 @@ static int32_t sHours = 4;
 static int32_t sMinutes = 45;
 
 Ticker ticker;
-// DigitalOut VibMotor(P0_12);
 PwmOut VibMotor(P0_12);
 
 /**********************
@@ -310,6 +310,9 @@ int main()
   // while(true) {
     // Initalize the display driver GC9A01
     GC9A01_init();
+
+    // Initialize the Accelerator
+    BMA423_init();
 
     // Do a led pwm bright to dim and to bright START
     // VibMotor.write(brightness); // 50% duty cycle
