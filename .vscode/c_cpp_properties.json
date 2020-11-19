@@ -24,6 +24,7 @@
                 "UNICODE",
                 "_UNICODE",
                 "DEVICE_I2C",
+                "DEVICE_SPI",
                 "MBED_PINNAMES_H",
                 "DEVICE_PWMOUT"
             ],

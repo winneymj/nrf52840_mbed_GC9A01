@@ -2,6 +2,7 @@
 #include <mbed.h>
 #include "lv_drv_conf.h"
 #include "common.h"
+#include "BMA42X-Sensor-Driver/src/bma4_defs.h"
 
 /* GLOBAL PINSSSSSS */
 #if GC9A01_SPI_BITS == 8
@@ -119,6 +120,12 @@ void spi_set_freq(int val)
 void i2c_wr(int data)
 {
 	i2c.write(data);
+}
+
+void i2c_wr_mem(int dev_addr, int reg_addr, char *data, int len)
+{
+
+  i2c.write(BMA4_I2C_ADDR_PRIMARY, data, len);
 }
 
 void delay_ms(int val) {

@@ -8,6 +8,12 @@
         "cmath": "cpp",
         "ostream": "cpp",
         "*.cpp_example_spim": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "mstd_atomic": "cpp",
+        "mstd_iterator": "cpp",
+        "*.tcc": "cpp"
     }
 }
