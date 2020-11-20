@@ -17,6 +17,7 @@ void delay_ms(int);
 void delay_us(int);
 
 // I2C
+void i2c_set_freq(int); // set speed over i2c
 void i2c_wr(int); // write a byte over i2c
 void i2c_wr_mem(int, int , char *, int); // write multiple bytes over i2c
 

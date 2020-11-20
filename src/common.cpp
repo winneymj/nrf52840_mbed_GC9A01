@@ -2,7 +2,7 @@
 #include <mbed.h>
 #include "lv_drv_conf.h"
 #include "common.h"
-#include "BMA42X-Sensor-Driver/src/bma4_defs.h"
+// #include "BMA42X-Sensor-Driver/src/bma4_defs.h"
 
 /* GLOBAL PINSSSSSS */
 #if GC9A01_SPI_BITS == 8
@@ -115,17 +115,34 @@ void spi_set_freq(int val)
 #endif
 }
 
+// Set i2c speed
+void i2c_set_freq(int freq)
+{
+	i2c.frequency(freq);
+}
+
 // write a single byte but mbed I2C write doesnt have one for writing
 // a single byte so we just write it as a 32 bits integer
 void i2c_wr(int data)
 {
+	i2c.lock();
+
 	i2c.write(data);
+
+	i2c.unlock();
 }
 
 void i2c_wr_mem(int dev_addr, int reg_addr, char *data, int len)
 {
+	i2c.lock();
 
-  i2c.write(BMA4_I2C_ADDR_PRIMARY, data, len);
+	// Write register
+	i2c.write(dev_addr, (const char *)&reg_addr, 1, true); // Do not send stop have more data
+
+	// Write data
+	i2c.write(dev_addr, (const char *)data, len);
+
+	i2c.unlock();
 }
 
 void delay_ms(int val) {
