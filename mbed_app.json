@@ -7,7 +7,8 @@
           "platform.stdio-buffered-serial"    : true,
           "platform.stdio-flush-at-exit"      : true,
           "platform.crash-capture-enabled"    : true,
-          "platform.fatal-error-auto-reboot-enabled": true
+          "platform.fatal-error-auto-reboot-enabled": true,
+          "target.printf_lib": "std"
     }
   }
 }

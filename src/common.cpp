@@ -4,6 +4,18 @@
 #include "common.h"
 // #include "BMA42X-Sensor-Driver/src/bma4_defs.h"
 
+#if 0
+#define DEBUG_PRINTF(...) printf(__VA_ARGS__)
+#else
+#define DEBUG_PRINTF(...)
+#endif
+
+#if 1
+#define ERROR_PRINTF(...) printf(__VA_ARGS__)
+#else
+#define ERROR_PRINTF(...)
+#endif
+
 /* GLOBAL PINSSSSSS */
 #if GC9A01_SPI_BITS == 8
 DigitalOut cmd_data(P1_10); // MDBT50Q-DB board
@@ -115,34 +127,67 @@ void spi_set_freq(int val)
 #endif
 }
 
+void scanI2C() {
+int ack;   
+int address;  
+
+	DEBUG_PRINTF("scanI2C: ENTER\r\n");
+	for(address=1;address<127;address++)
+	{
+    	ack = i2c.write(address, 0x00, 1);
+		if (ack == 0)
+		{
+			DEBUG_PRINTF("\tFound at %3d -- %3x, %3x\r\n", address, address, address >> 1);
+		}    
+		wait_us(1000);
+	} 
+	DEBUG_PRINTF("scanI2C: EXIT\r\n");
+}
+
 // Set i2c speed
 void i2c_set_freq(int freq)
 {
+	DEBUG_PRINTF("i2c_set_freq: ENTER, fred=%d\r\n", freq);
 	i2c.frequency(freq);
+	DEBUG_PRINTF("i2c_set_freq: EXIT\r\n");
 }
 
-// write a single byte but mbed I2C write doesnt have one for writing
-// a single byte so we just write it as a 32 bits integer
-void i2c_wr(int data)
+int i2c_wr(uint8_t dev_addr, const char *data, int len, int repeated = false)
 {
+	DEBUG_PRINTF("i2c_wr: ENTER, dev_addr=0x%x, data=0x%x, len=%d\r\n",dev_addr, *data, len);
 	i2c.lock();
 
-	i2c.write(data);
+	// Write
+	int rslt = i2c.write(dev_addr, data, len, repeated);
+
+	if (0 != rslt)
+	{
+		ERROR_PRINTF("i2c_wr: i2c.write failed, rslt=%d!\r\n", rslt);
+	}
 
 	i2c.unlock();
+
+	DEBUG_PRINTF("i2c_wr: EXIT, rslt=%d\r\n", rslt);
+	return rslt;
 }
 
-void i2c_wr_mem(int dev_addr, int reg_addr, char *data, int len)
+// Read bytes from I2C
+int i2c_rd(int dev_addr, char *data, int len, int repeated = false)
 {
+	DEBUG_PRINTF("i2c_rd: ENTER, dev_addr=0x%x, len=%d\r\n",dev_addr, len);
 	i2c.lock();
 
-	// Write register
-	i2c.write(dev_addr, (const char *)&reg_addr, 1, true); // Do not send stop have more data
+	// Read data
+	int rslt = i2c.read(dev_addr, (char *)data, len, repeated);
 
-	// Write data
-	i2c.write(dev_addr, (const char *)data, len);
+	if (0 != rslt)
+	{
+		ERROR_PRINTF("i2c_rd: i2c.read failed, rslt=%d\r\n", rslt);
+	}
 
 	i2c.unlock();
+	DEBUG_PRINTF("i2c_rd: EXIT, data=0x%x, rslt=%d\r\n", *data, rslt);
+	return rslt;
 }
 
 void delay_ms(int val) {

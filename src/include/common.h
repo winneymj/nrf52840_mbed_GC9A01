@@ -18,8 +18,11 @@ void delay_us(int);
 
 // I2C
 void i2c_set_freq(int); // set speed over i2c
-void i2c_wr(int); // write a byte over i2c
-void i2c_wr_mem(int, int , char *, int); // write multiple bytes over i2c
+/**
+ * write multiple bytes over i2c, return 0 if success
+ */ 
+int  i2c_wr(uint8_t dev_addr, const char *data, int len, int repeated);
+int  i2c_rd(int, char *, int, int); // read multiple bytes over i2c
 
 
 #ifdef __cplusplus

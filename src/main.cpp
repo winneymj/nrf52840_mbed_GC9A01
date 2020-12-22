@@ -4,10 +4,11 @@
  */
 
 #include "mbed.h"
-// #include "USBConsole.h"
+#include "USBConsole.h"
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
 #include <BMA42X-Sensor-Driver/BMA423.h>
+#include <bma4.h>
 // enum etick_units {
 //   SECOND_UNIT
 // };
@@ -307,12 +308,13 @@ int main()
   // float addition = 0.001;
   // VibMotor.period(0.010f); // 1 second period
 
-  // while(true) {
     // Initalize the display driver GC9A01
     GC9A01_init();
 
     // Initialize the Accelerator
     BMA423_init();
+
+  // while(true) {
 
     // Do a led pwm bright to dim and to bright START
     // VibMotor.write(brightness); // 50% duty cycle
