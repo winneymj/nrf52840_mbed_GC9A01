@@ -7,8 +7,8 @@
 #include "USBConsole.h"
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
-#include <BMA42X-Sensor-Driver/BMA423.h>
-#include <bma4.h>
+#include <bma423_main.h>
+// #include <bma4.h>
 // enum etick_units {
 //   SECOND_UNIT
 // };
