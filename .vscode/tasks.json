@@ -18,6 +18,20 @@
       ]
     },
     {
+        "label": "compile debug",
+        "group": "build",
+        "command": "mbed",
+        "args": [
+            "compile",
+            "--profile=debug",
+            "-v",
+            "-t",
+            "GCC_ARM",
+            "-m",
+            "ADAFRUIT_NRF52840_FEATHER"
+        ]
+      },
+      {
         "label": "nrfutil app hex to DFU zip",
         "group": "build",
         "command": "nrfutil",
@@ -93,14 +107,63 @@
         ]
     },
     {
+// Flashing: s140_nrf52_6.1.0_softdevice.hex
+        "label": "nrfjprog Flash softdevice",
+        "group": "build",
+        "command": "nrfjprog",
+        "args": [
+            "-f",
+            "nrf52",
+            "--program",
+            "C:\\nRF5_SDK_15.2.0_9412b96\\components\\softdevice\\s140\\hex\\s140_nrf52_6.1.0_softdevice.hex",
+            "--sectorerase"
+        ]
+    },
+    {
+        "label": "nrfjprog Flash application",
+        "group": "build",
+        "command": "nrfjprog",
+        "args": [
+            "-f",
+            "nrf52",
+            "--program",
+            "${workspaceFolder}\\BUILD\\ADAFRUIT_NRF52840_FEATHER\\GCC_ARM-DEBUG\\${workspaceFolderBasename}_application.hex",
+            "--sectorerase"
+        ]
+    },
+    {
+        "label": "nrfjprog reset",
+        "group": "build",
+        "command": "nrfjprog",
+        "args": [
+            "-f",
+            "nrf52",
+            "--reset"
+        ]
+    },
+    {
         "label": "Build Release",
         "group": {
             "kind": "build",
             "isDefault": true
         },
         "dependsOrder": "sequence",
-        // "dependsOn": ["compile release", "ada-nrfutil app hex to DFU zip", "ada-nrfutil flash DFU pkg"]
-        "dependsOn": ["compile release", "nrfutil app hex to DFU zip", "nrfutil flash DFU pkg"]
+        "dependsOn": ["compile release", "nrfjprog Flash application", "nrfjprog reset"]
+        // "dependsOn": ["nrfjprog Flash softdevice"]
+        // uncomment below in if you are using Adafruit NRF52840 board
+        // "dependsOn": ["compile release", "nrfutil app hex to DFU zip", "nrfutil flash DFU pkg"]
+    },
+    {
+        "label": "Build Debug",
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        },
+        "dependsOrder": "sequence",
+        "dependsOn": ["compile debug", "nrfjprog Flash application", "nrfjprog reset"]
+        // "dependsOn": ["nrfjprog Flash softdevice"]
+        // uncomment below in if you are using Adafruit NRF52840 board
+        // "dependsOn": ["compile release", "nrfutil app hex to DFU zip", "nrfutil flash DFU pkg"]
     }
   ]
 }

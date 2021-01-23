@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "name": "Debug (J-Link)",
+            "cwd": "${workspaceRoot}",
+            "executable": "C:/development/mbed/nrf52840_mbed_GC9A01/BUILD/ADAFRUIT_NRF52840_FEATHER/GCC_ARM-DEBUG/nrf52840_mbed_GC9A01_application.elf",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files (x86)/SEGGER/JLink/JLinkGDBServerCL.exe", 
+            "device": "nrf52",
+            "interface": "swd",
+            "serialNumber": "",
+            "preLaunchTask": "Build Debug",
+            "runToMain": true,
+            // "svdFile": "${workspaceRoot}/.vscode/STM32F429.svd",
+            "swoConfig": {
+                "enabled": true,
+                "cpuFrequency": 8000000,
+                "swoFrequency": 2000000,
+                "source": "probe",
+                "decoders": [
+                    { "type": "console", "label": "ITM", "port": 0 }
+                ]
+            }
+        },
+    ]
+}
