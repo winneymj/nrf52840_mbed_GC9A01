@@ -17,7 +17,8 @@
                 "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\9 2020-q2-update\\lib\\gcc\\arm-none-eabi\\9.3.1\\include",
                 "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\9 2020-q2-update\\arm-none-eabi\\include\\c++\\9.3.1",
                 "C:/Program Files (x86)/GNU Arm Embedded Toolchain/9 2020-q2-update/arm-none-eabi/include/c++/9.3.1/arm-none-eabi",
-                "C:/Program Files (x86)/GNU Arm Embedded Toolchain/9 2020-q2-update/arm-none-eabi/include"
+                "C:/Program Files (x86)/GNU Arm Embedded Toolchain/9 2020-q2-update/arm-none-eabi/include",
+                "${workspaceFolder}/SEGGER_RTT"
             ],
             "defines": [
                 "_DEBUG",

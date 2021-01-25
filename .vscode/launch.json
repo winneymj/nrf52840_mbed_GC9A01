@@ -14,7 +14,6 @@
             "serialNumber": "",
             "preLaunchTask": "Build Debug",
             "runToMain": true,
-            // "svdFile": "${workspaceRoot}/.vscode/STM32F429.svd",
             "swoConfig": {
                 "enabled": true,
                 "cpuFrequency": 8000000,

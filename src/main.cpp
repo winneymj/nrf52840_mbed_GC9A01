@@ -4,7 +4,11 @@
  */
 
 #include "mbed.h"
-#include "USBConsole.h"
+// Include below if you are using Adafruit NRF52840 Feather want printf to output through USB to console.
+// #include "USBConsole.h"
+extern "C"{
+  #include "SEGGER_RTT.h"
+}
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
 #include <bma423_main.h>
@@ -37,6 +41,12 @@ static int32_t sMinutes = 45;
 Ticker ticker;
 PwmOut VibMotor(P0_12);
 
+// Declare button interrupts
+InterruptIn button_RT(P0_3, PullUp); // Right Top
+InterruptIn button_RM(P0_13, PullUp); // Right Middle
+InterruptIn button_RB(P0_15, PullUp); // Right Bottom
+InterruptIn button_LB(P0_25, PullUp); // Left Bottom
+
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -50,6 +60,38 @@ static int32_t getAngleForHour(int hour) {
 
 static int32_t getAngleForMinutes(int minutes) {
   return (minutes * 360) / 60;
+}
+
+void button_RTop()
+{
+  SEGGER_RTT_printf(0, "button_RTop:!\n");
+}
+
+void button_RMiddle()
+{
+  SEGGER_RTT_printf(0, "button_RMiddle:!\n");
+}
+
+void button_RBottom()
+{
+  SEGGER_RTT_printf(0, "button_RBottom:!\n");
+}
+
+void button_LBottom()
+{
+  SEGGER_RTT_printf(0, "button_LBottom:!\n");
+}
+
+void button_init()
+{
+  SEGGER_RTT_printf(0, "button_init: ENTER\n");
+
+  button_RT.fall(&button_RTop); // Setup interrupt callback
+  button_RM.fall(&button_RMiddle); // Setup interrupt callback
+  button_RB.fall(&button_RBottom); // Setup interrupt callback
+  button_LB.fall(&button_LBottom); // Setup interrupt callback
+
+  SEGGER_RTT_printf(0, "button_init: EXIT\n");
 }
 
 void lvl_ticker_func()
@@ -302,17 +344,22 @@ void lv_ex_page_1(void)
 // main() runs in its own thread in the OS
 int main()
 {
+  SEGGER_RTT_Init();
+
   printf("main: ENTER\r\n");
 
   // float brightness = 0.5f;
   // float addition = 0.001;
   // VibMotor.period(0.010f); // 1 second period
 
-    // Initalize the display driver GC9A01
-    GC9A01_init();
+  // Initalize the display driver GC9A01
+  GC9A01_init();
 
-    // Initialize the Accelerator
-    BMA423_init();
+  // Initialize the Accelerator
+  BMA423_init();
+
+  // Initialize button interrupts
+  button_init();
 
   // while(true) {
 
