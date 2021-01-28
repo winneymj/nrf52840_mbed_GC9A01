@@ -47,6 +47,11 @@ InterruptIn button_RM(P0_13, PullUp); // Right Middle
 InterruptIn button_RB(P0_15, PullUp); // Right Bottom
 InterruptIn button_LB(P0_25, PullUp); // Left Bottom
 
+// LCD Light level pins
+DigitalOut light_level1(P0_30, 0);
+DigitalOut light_level2(P0_28, 0);
+DigitalOut light_level3(P0_31, 0);
+
 /**********************
  *  STATIC VARIABLES
  **********************/
