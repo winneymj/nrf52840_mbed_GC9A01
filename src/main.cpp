@@ -4,11 +4,16 @@
  */
 
 #include "mbed.h"
+#include "ble/BLE.h"
+#include "SecurityPeripheral.h"
+#include "SecurityCentral.h"
+
 // Include below if you are using Adafruit NRF52840 Feather want printf to output through USB to console.
 // #include "USBConsole.h"
 extern "C"{
   #include "SEGGER_RTT.h"
 }
+
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
 #include <bma423_main.h>
@@ -349,9 +354,26 @@ void lv_ex_page_1(void)
 // main() runs in its own thread in the OS
 int main()
 {
+  // Ble
+  events::EventQueue queue;
+  BLE& ble = BLE::Instance();
+
   SEGGER_RTT_Init();
 
   printf("main: ENTER\r\n");
+
+  while(true) {
+    {
+        printf("\r\n * Device is a peripheral *\r\n\r\n");
+        MiTime::Components::SecurityPeripheral peripheral(ble, queue);
+        peripheral.run();
+    }
+    {
+        printf("\r\n * Device is a central *\r\n\r\n");
+        MiTime::Components::SecurityCentral central(ble, queue);
+        central.run();
+    }
+  }
 
   // float brightness = 0.5f;
   // float addition = 0.001;
@@ -406,7 +428,6 @@ int main()
   ticker.attach_us(callback(&lvl_ticker_func), TICKER_TIME);
 
 	printf("main: ticker.attach() done\r\n");
-  events::EventQueue queue;
 
   // Set callback for lv_task_handler to redraw the screen if necessary
   queue.call_every(5, callback(&eventcb));
