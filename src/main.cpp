@@ -368,11 +368,11 @@ int main()
         MiTime::Components::SecurityPeripheral peripheral(ble, queue);
         peripheral.run();
     }
-    {
-        printf("\r\n * Device is a central *\r\n\r\n");
-        MiTime::Components::SecurityCentral central(ble, queue);
-        central.run();
-    }
+    // {
+    //     printf("\r\n * Device is a central *\r\n\r\n");
+    //     MiTime::Components::SecurityCentral central(ble, queue);
+    //     central.run();
+    // }
   }
 
   // float brightness = 0.5f;

@@ -18,6 +18,9 @@
 #include <mbed.h>
 #include <NonCopyable.h>
 #include "ble/BLE.h"
+extern "C"{
+  #include "SEGGER_RTT.h"
+}
 
 /** This example demonstrates all the basic setup required for pairing and setting
  *  up link security both as a central and peripheral. It also demonstrates privacy
@@ -42,6 +45,7 @@
  *  back to the applications. You can provide overrides for a selection of events
  *  your application is interested in.
  */
+
 namespace MiTime {
     namespace Components {
         class SecurityMgr : private mbed::NonCopyable<SecurityMgr>,

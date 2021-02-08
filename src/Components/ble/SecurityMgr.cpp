@@ -18,6 +18,7 @@
 #include <mbed.h>
 #include "ble/BLE.h"
 #include "SecurityMgr.h"
+#include "pretty_printer.h"
 extern "C"{
   #include "SEGGER_RTT.h"
 }
@@ -56,6 +57,8 @@ SecurityMgr::~SecurityMgr()
 /** Start BLE interface initialisation */
 void SecurityMgr::run()
 {
+    SEGGER_RTT_printf(0, "SecurityMgr::run(): ENTER\r\n");
+
     /* this will inform us off all events so we can schedule their handling
         * using our event queue */
     _ble.onEventsToProcess(makeFunctionPointer(this, &SecurityMgr::schedule_ble_events));
@@ -76,12 +79,15 @@ void SecurityMgr::run()
     }
 
     /* this will not return until shutdown */
+    SEGGER_RTT_printf(0, "SecurityMgr::run(): BEFORE dispatch_forever()\r\n");
     _event_queue.dispatch_forever();
 };
 
 /** This is called when BLE interface is initialised and starts the demonstration */
 void SecurityMgr::on_init_complete(BLE::InitializationCompleteCallbackContext *event)
 {
+    // SEGGER_RTT_printf(0, "SecurityMgr::on_init_complete(): ENTER\r\n");
+
     ble_error_t error;
 
     if (event->error) {
@@ -93,10 +99,11 @@ void SecurityMgr::on_init_complete(BLE::InitializationCompleteCallbackContext *e
         * to seed RNG as the address is unique */
     print_local_address();
 
-
     /* This path will be used to store bonding information but will fallback
         * to storing in memory if file access fails (for example due to lack of a filesystem) */
     const char* db_path = "/fs/bt_sec_db";
+
+    // SEGGER_RTT_printf(0, "SecurityMgr::securityManager().init() before\r\n");
 
     error = _ble.securityManager().init(
         /* enableBonding */ true,
@@ -106,6 +113,8 @@ void SecurityMgr::on_init_complete(BLE::InitializationCompleteCallbackContext *e
         /* signing */ false,
         /* dbFilepath */ db_path
     );
+
+    // SEGGER_RTT_printf(0, "SecurityMgr::securityManager().init() after\r\n");
 
     if (error) {
         SEGGER_RTT_printf(0, "Error during initialising security manager:error=%d\r\n", error);
@@ -133,12 +142,17 @@ void SecurityMgr::on_init_complete(BLE::InitializationCompleteCallbackContext *e
         return;
     }
 
-    /* continuation is in onPrivacyEnabled() */
+    /* continuation is in onPrivacyEnabled() - Does not seem to exist anymore */
+    /* all initialisation complete, start our main activity */
+    start();  // This was in onPrivacyEnabled()
+
+    // SEGGER_RTT_printf(0, "SecurityMgr::on_init_complete(): EXIT\r\n");
 };
 
 /** Schedule processing of events from the BLE in the event queue. */
 void SecurityMgr::schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
 {
+    // SEGGER_RTT_printf(0, "SecurityMgr::schedule_ble_events()\r\n");
     _event_queue.call([&ble_instance = context->ble] { ble_instance.processEvents(); });
 };
 
@@ -155,6 +169,8 @@ void SecurityMgr::pairingRequest(ble::connection_handle_t connectionHandle)
 void SecurityMgr::pairingResult(ble::connection_handle_t connectionHandle,
     SecurityManager::SecurityCompletionStatus_t result) 
 {
+    SEGGER_RTT_printf(0, "SecurityMgr::pairingResult(): ENTER\r\n");
+
     if (result == SecurityManager::SEC_STATUS_SUCCESS) {
         SEGGER_RTT_printf(0, "Pairing successful\r\n");
         _bonded = true;
@@ -168,6 +184,7 @@ void SecurityMgr::pairingResult(ble::connection_handle_t connectionHandle,
             _ble.gap().disconnect(connectionHandle, ble::local_disconnection_reason_t::USER_TERMINATION);
         }
     );
+    SEGGER_RTT_printf(0, "SecurityMgr::pairingResult(): EXIT\r\n");
 }
 
 /** Inform the application of change in encryption status. This will be
@@ -194,11 +211,13 @@ void SecurityMgr::linkEncryptionResult(ble::connection_handle_t connectionHandle
 /** This is called by Gap to notify the application we connected */
 void SecurityMgr::onConnectionComplete(const ble::ConnectionCompleteEvent &event)
 {
+    SEGGER_RTT_printf(0, "SecurityMgr::onConnectionComplete(): ENTER\r\n");
+
     SEGGER_RTT_printf(0, "Connected to peer: ");
-    // print_address(event.getPeerAddress().data());
+    print_address(event.getPeerAddress().data());
     if (event.getPeerResolvablePrivateAddress() != ble::address_t()) {
         SEGGER_RTT_printf(0, "Peer random resolvable address: ");
-        // print_address(event.getPeerResolvablePrivateAddress().data());
+        print_address(event.getPeerResolvablePrivateAddress().data());
     }
 
     _handle = event.getConnectionHandle();
@@ -222,11 +241,14 @@ void SecurityMgr::onConnectionComplete(const ble::ConnectionCompleteEvent &event
             _ble.gap().disconnect(_handle, ble::local_disconnection_reason_t::USER_TERMINATION);
         }
     }
+    SEGGER_RTT_printf(0, "SecurityMgr::onConnectionComplete(): EXIT\r\n");
 }
 
 /** This is called by Gap to notify the application we disconnected */
 void SecurityMgr::onDisconnectionComplete(const ble::DisconnectionCompleteEvent &event)
 {
+    SEGGER_RTT_printf(0, "SecurityMgr::onDisconnectionComplete(): ENTER\r\n");
+
     if (_bonded) {
         /* we have connected to and bonded with the other device, from now
             * on we will use the second start function and stay in the same role
@@ -237,6 +259,7 @@ void SecurityMgr::onDisconnectionComplete(const ble::DisconnectionCompleteEvent 
         SEGGER_RTT_printf(0, "Failed to bond.\r\n");
         _event_queue.break_dispatch();
     }
+    SEGGER_RTT_printf(0, "SecurityMgr::onDisconnectionComplete(): EXIT\r\n");
 }
 
 void SecurityMgr::onScanTimeout(const ble::ScanTimeoutEvent &)
@@ -261,7 +284,7 @@ void SecurityMgr::print_local_address()
     ble::address_t addr;
     _ble.gap().getAddress(addr_type, addr);
     SEGGER_RTT_printf(0, "Device address: ");
-    // print_address(addr);
+    print_address((uint8_t *)&addr);
     static bool _seeded = false;
     if (!_seeded) {
         _seeded = true;

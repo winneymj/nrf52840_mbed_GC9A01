@@ -29,6 +29,8 @@ extern const char DEVICE_NAME[];
 /** Set up and start advertising accepting anyone */
 void SecurityPeripheral::start()
 {
+    SEGGER_RTT_printf(0, "SecurityPeripheral::start(): ENTER\r\n");
+
     ble::peripheral_privacy_configuration_t privacy_configuration = {
         /* use_non_resolvable_random_address */ false,
         ble::peripheral_privacy_configuration_t::PERFORM_PAIRING_PROCEDURE
@@ -44,13 +46,19 @@ void SecurityPeripheral::start()
     _ble.gap().setPeripheralPrivacyConfiguration(&privacy_configuration);
 
     start_advertising();
+
+    SEGGER_RTT_printf(0, "SecurityPeripheral::start(): EXIT\r\n");
 };
 
 void SecurityPeripheral::start_advertising()
 {
+    SEGGER_RTT_printf(0, "start_advertising(): ENTER\r\n");
+
     uint8_t adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
     /* use the helper to build the payload */
     ble::AdvertisingDataBuilder adv_data_builder(adv_buffer);
+
+    SEGGER_RTT_printf(0, "start_advertising(): %s\r\n", DEVICE_NAME);
 
     adv_data_builder.setFlags();
     adv_data_builder.setName(DEVICE_NAME);
