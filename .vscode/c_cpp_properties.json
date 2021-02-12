@@ -29,7 +29,8 @@
                 "DEVICE_I2C",
                 "DEVICE_SPI",
                 "MBED_PINNAMES_H",
-                "DEVICE_PWMOUT"
+                "DEVICE_PWMOUT",
+                "BLE_ROLE_BROADCASTER"
             ],
             "windowsSdkVersion": "10.0.18362.0",
             "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/cl.exe",

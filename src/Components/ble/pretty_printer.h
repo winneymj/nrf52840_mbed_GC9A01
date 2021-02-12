@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+#ifndef _PRETTY_PRINTER_H_
+#define _PRETTY_PRINTER_H_
+
 #include <mbed.h>
 #include "ble/BLE.h"
 extern "C"{
@@ -110,3 +112,4 @@ inline const char* phy_to_string(ble::phy_t phy) {
     }
 }
  
+#endif
