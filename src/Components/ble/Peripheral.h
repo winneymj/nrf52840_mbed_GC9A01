@@ -41,7 +41,7 @@ private:
     /** Callback triggered when the ble initialization process has finished */
     void on_init_complete(BLE::InitializationCompleteCallbackContext *params);
     void start_advertising();
-     void update_sensor_value();
+    void update_sensor_value();
  
 private:
     /* Event handler */

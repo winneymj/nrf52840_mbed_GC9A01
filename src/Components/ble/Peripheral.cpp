@@ -97,6 +97,8 @@ void Peripheral::start_advertising()
         SEGGER_RTT_printf(0, "_ble.gap().startAdvertising() failed\r\n");
         return;
     }
+
+    SEGGER_RTT_printf(0, "start_advertising:EXIT\n");
 }
  
 void Peripheral::update_sensor_value()
