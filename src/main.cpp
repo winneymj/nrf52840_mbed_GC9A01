@@ -23,6 +23,10 @@
 #include "ble/GattServer.h"
 #include "BLEProcess.h"
 #include "Components/ble/CurrentTimeService.h"
+#include "Components/ble/AlertNotificationService.h"
+#include "Components/ble/NotificationManager.h"
+#include "Components/datetime/DateTimeController.h"
+
 extern "C"{
   #include "SEGGER_RTT.h"
 }
@@ -30,16 +34,29 @@ extern "C"{
 using namespace Mytime::Controllers;
 
 int main() {
+    SEGGER_RTT_printf(0, "main: START\r\n");
+
     BLE &ble_interface = BLE::Instance();
     events::EventQueue event_queue;
     DateTime date_time_controller;
-    CurrentTimeService demo_service(date_time_controller);
+    NotificationManager notification_manager;
+
+    CurrentTimeService current_time_service(date_time_controller);
+    AlertNotificationService alert_notification_service(notification_manager);
     BLEProcess ble_process(event_queue, ble_interface);
 
-    ble_process.on_init(callback(&demo_service, &CurrentTimeService::start));
+    mbed::Callback<void(BLE&, events::EventQueue&)> post_init_cb[] = {
+        callback(&current_time_service, &CurrentTimeService::start),
+        callback(&alert_notification_service, &AlertNotificationService::start),
+        NULL
+    };
+
+    SEGGER_RTT_printf(0, "main: ble_process.on_init()\r\n");
+    ble_process.on_init(post_init_cb);
 
     // bind the event queue to the ble interface, initialize the interface
     // and start advertising
+    SEGGER_RTT_printf(0, "main: ble_process.start()\r\n");
     ble_process.start();
 
     return 0;

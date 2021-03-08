@@ -26,6 +26,7 @@
 #include "gap/AdvertisingDataParser.h"
 #include "ble/common/FunctionPointerWithContext.h"
 #include "BLEProcess.h"
+
 extern "C"{
   #include "SEGGER_RTT.h"
 }
@@ -46,7 +47,7 @@ BLEProcess::~BLEProcess()
      */
 void BLEProcess::start()
 {
-    SEGGER_RTT_printf(0, "Ble process started.\r\n");
+    SEGGER_RTT_printf(0, "BLEProcess::start: START\r\n");
 
     if (_ble_interface.hasInitialized()) {
         SEGGER_RTT_printf(0, "Error: the ble instance has already been initialized.\r\n");
@@ -62,15 +63,15 @@ void BLEProcess::start()
         makeFunctionPointer(this, &BLEProcess::schedule_ble_events)
     );
 
-    ble_error_t error = _ble_interface.init(
-        this, &BLEProcess::on_init_complete
-    );
+    SEGGER_RTT_printf(0, "BLEProcess::start: _ble_interface.init()\r\n");
+    ble_error_t error = _ble_interface.init(this, &BLEProcess::on_init_complete);
 
     if (error) {
         print_error(error, "Error returned by BLE::init.\r\n");
         return;
     }
 
+    SEGGER_RTT_printf(0, "BLEProcess::start: dispatch_forever()\r\n");
     // Process the event queue.
     _event_queue.dispatch_forever();
 
@@ -94,7 +95,7 @@ void BLEProcess::stop()
  * @param[in] cb The callback object that will be called when the ble
  * interface is initialized.
  */
-void BLEProcess::on_init(mbed::Callback<void(BLE&, events::EventQueue&)> cb)
+void BLEProcess::on_init(mbed::Callback<void(BLE&, events::EventQueue&)>* cb)
 {
     _post_init_cb = cb;
 }
@@ -116,9 +117,15 @@ void BLEProcess::on_init_complete(BLE::InitializationCompleteCallbackContext *ev
     /* All calls are serialised on the user thread through the event queue */
     _event_queue.call(this, &BLEProcess::start_advertising);
 
-    if (_post_init_cb) {
-        _post_init_cb(_ble_interface, _event_queue);
-    }
+    int loop = 0;
+    while (_post_init_cb[loop])
+    {
+        if (_post_init_cb[loop])
+        {
+            _post_init_cb[loop](_ble_interface, _event_queue);
+        }
+        loop++;
+    };
 }
 
 /**

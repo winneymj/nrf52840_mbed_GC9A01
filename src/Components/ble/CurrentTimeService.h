@@ -42,6 +42,139 @@ extern "C"{
  */
 namespace Mytime {
     namespace Controllers {
+
+        /**
+         * Read, Write, Notify, Indicate  Characteristic declaration helper.
+         *
+         * @tparam T type of data held by the characteristic.
+         */
+        template<typename T>
+        class ReadWriteNotifyIndicateCharacteristic : public GattCharacteristic {
+        public:
+            /**
+             * Construct a characteristic that can be read or written and emit
+             * notification or indication.
+             *
+             * @param[in] uuid The UUID of the characteristic.
+             * @param[in] initial_value Initial value contained by the characteristic.
+             */
+            ReadWriteNotifyIndicateCharacteristic(const UUID & uuid, const T& initial_value) :
+                GattCharacteristic(
+                    /* UUID */ uuid,
+                    /* Initial value */ (uint8_t *)&_value,
+                    /* Value size */ sizeof(_value),
+                    /* Value capacity */ sizeof(_value),
+                    /* Properties */ GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ |
+                                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE |
+                                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY |
+                                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_INDICATE,
+                    /* Descriptors */ NULL,
+                    /* Num descriptors */ 0,
+                    /* variable len */ false
+                ),
+                _value(initial_value)
+            {
+                SEGGER_RTT_printf(0, "ReadWriteNotifyIndicateCharacteristic: size= %d\r\n", sizeof(_value));
+            }
+
+            /**
+             * Get the value of this characteristic.0
+             *
+             * @param[in] server GattServer instance that contain the characteristic
+             * value.
+             * @param[in] dst Variable that will receive the characteristic value.
+             *
+             * @return BLE_ERROR_NONE in case of success or an appropriate error code.
+             */
+            ble_error_t get(GattServer &server, T& dst) const
+            {
+                uint16_t value_length = sizeof(dst);
+                return server.read(getValueHandle(), &dst, &value_length);
+            }
+
+            /**
+             * Assign a new value to this characteristic.
+             *
+             * @param[in] server GattServer instance that will receive the new value.
+             * @param[in] value The new value to set.
+             * @param[in] local_only Flag that determine if the change should be kept
+             * locally or forwarded to subscribed clients.
+             */
+            ble_error_t set(
+                GattServer &server, const T& value, bool local_only = false
+            ) const {
+                return server.write(getValueHandle(), &value, sizeof(value), local_only);
+            }
+
+        private:
+            T _value;
+        };
+
+
+        /**
+         * Notify Characteristic declaration helper.
+         *
+         * @tparam T type of data held by the characteristic.
+         */
+        template<typename T>
+        class NotifyCharacteristic : public GattCharacteristic {
+        public:
+            /**
+             * Construct a characteristic that can be read or written and emit
+             * notification or indication.
+             *
+             * @param[in] uuid The UUID of the characteristic.
+             * @param[in] initial_value Initial value contained by the characteristic.
+             */
+            NotifyCharacteristic(const UUID & uuid, const T& initial_value) :
+                GattCharacteristic(
+                    /* UUID */ uuid,
+                    /* Initial value */ (uint8_t *)&_value,
+                    /* Value size */ sizeof(_value),
+                    /* Value capacity */ sizeof(_value),
+                    /* Properties */ GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY,
+                    /* Descriptors */ NULL,
+                    /* Num descriptors */ 0,
+                    /* variable len */ false
+                ),
+                _value(initial_value)
+            {
+                SEGGER_RTT_printf(0, "NotifyCharacteristic: size= %d\r\n", sizeof(_value));
+            }
+
+            /**
+             * Get the value of this characteristic.0
+             *
+             * @param[in] server GattServer instance that contain the characteristic
+             * value.
+             * @param[in] dst Variable that will receive the characteristic value.
+             *
+             * @return BLE_ERROR_NONE in case of success or an appropriate error code.
+             */
+            ble_error_t get(GattServer &server, T& dst) const
+            {
+                uint16_t value_length = sizeof(dst);
+                return server.read(getValueHandle(), &dst, &value_length);
+            }
+
+            /**
+             * Assign a new value to this characteristic.
+             *
+             * @param[in] server GattServer instance that will receive the new value.
+             * @param[in] value The new value to set.
+             * @param[in] local_only Flag that determine if the change should be kept
+             * locally or forwarded to subscribed clients.
+             */
+            ble_error_t set(
+                GattServer &server, const T& value, bool local_only = false
+            ) const {
+                return server.write(getValueHandle(), &value, sizeof(value), local_only);
+            }
+
+        private:
+            T _value;
+        };
+
         class CurrentTimeService {
             typedef CurrentTimeService Self;
 
@@ -136,73 +269,6 @@ namespace Mytime {
             {
                 return makeFunctionPointer(this, member);
             }
-
-            /**
-             * Read, Write, Notify, Indicate  Characteristic declaration helper.
-             *
-             * @tparam T type of data held by the characteristic.
-             */
-            template<typename T>
-            class ReadWriteNotifyIndicateCharacteristic : public GattCharacteristic {
-            public:
-                /**
-                 * Construct a characteristic that can be read or written and emit
-                 * notification or indication.
-                 *
-                 * @param[in] uuid The UUID of the characteristic.
-                 * @param[in] initial_value Initial value contained by the characteristic.
-                 */
-                ReadWriteNotifyIndicateCharacteristic(const UUID & uuid, const T& initial_value) :
-                    GattCharacteristic(
-                        /* UUID */ uuid,
-                        /* Initial value */ (uint8_t *)&_value,
-                        /* Value size */ sizeof(_value),
-                        /* Value capacity */ sizeof(_value),
-                        /* Properties */ GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ |
-                                        GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE |
-                                        GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY |
-                                        GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_INDICATE,
-                        /* Descriptors */ NULL,
-                        /* Num descriptors */ 0,
-                        /* variable len */ false
-                    ),
-                    _value(initial_value)
-                {
-                    SEGGER_RTT_printf(0, "ReadWriteNotifyIndicateCharacteristic: size= %d\r\n", sizeof(_value));
-                }
-
-                /**
-                 * Get the value of this characteristic.0
-                 *
-                 * @param[in] server GattServer instance that contain the characteristic
-                 * value.
-                 * @param[in] dst Variable that will receive the characteristic value.
-                 *
-                 * @return BLE_ERROR_NONE in case of success or an appropriate error code.
-                 */
-                ble_error_t get(GattServer &server, T& dst) const
-                {
-                    uint16_t value_length = sizeof(dst);
-                    return server.read(getValueHandle(), &dst, &value_length);
-                }
-
-                /**
-                 * Assign a new value to this characteristic.
-                 *
-                 * @param[in] server GattServer instance that will receive the new value.
-                 * @param[in] value The new value to set.
-                 * @param[in] local_only Flag that determine if the change should be kept
-                 * locally or forwarded to subscribed clients.
-                 */
-                ble_error_t set(
-                    GattServer &server, const T& value, bool local_only = false
-                ) const {
-                    return server.write(getValueHandle(), &value, sizeof(value), local_only);
-                }
-
-            private:
-                T _value;
-            };
 
             typedef struct {
                 uint16_t year;

@@ -79,7 +79,7 @@ public:
      * @param[in] cb The callback object that will be called when the ble
      * interface is initialized.
      */
-    void on_init(mbed::Callback<void(BLE&, events::EventQueue&)> cb);
+    void on_init(mbed::Callback<void(BLE&, events::EventQueue&)>* cb);
 
 private:
     /**
@@ -121,7 +121,7 @@ private:
 
     ble::advertising_handle_t _adv_handle;
 
-    mbed::Callback<void(BLE&, events::EventQueue&)> _post_init_cb;
+    mbed::Callback<void(BLE&, events::EventQueue&)>* _post_init_cb;
 };
 
 #endif /* GATT_SERVER_EXAMPLE_BLE_PROCESS_H_ */

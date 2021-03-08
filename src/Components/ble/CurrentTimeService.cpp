@@ -41,11 +41,11 @@ void CurrentTimeService::start(BLE &ble_interface, events::EventQueue &event_que
     _event_queue = &event_queue;
 
     // register the service
-    SEGGER_RTT_printf(0, "Adding demo service\r\n");
+    SEGGER_RTT_printf(0, "Adding _clock_service service\r\n");
     ble_error_t err = _server->addService(_clock_service);
 
     if (err) {
-        SEGGER_RTT_printf(0, "Error %u during demo service registration.\r\n", err);
+        SEGGER_RTT_printf(0, "Error %u during CurrentTimeService service registration.\r\n", err);
         return;
     }
 
@@ -60,7 +60,7 @@ void CurrentTimeService::start(BLE &ble_interface, events::EventQueue &event_que
     _server->onConfirmationReceived(as_cb(&Self::when_confirmation_received));
 
     // print the handles
-    SEGGER_RTT_printf(0, "clock service registered\r\n");
+    SEGGER_RTT_printf(0, "CurrentTimeService service registered\r\n");
     SEGGER_RTT_printf(0, "service handle: %u\r\n", _clock_service.getHandle());
     // SEGGER_RTT_printf(0, "\thour characteristic value handle %u\r\n", _hour_char.getValueHandle());
     // SEGGER_RTT_printf(0, "\tminute characteristic value handle %u\r\n", _minute_char.getValueHandle());
