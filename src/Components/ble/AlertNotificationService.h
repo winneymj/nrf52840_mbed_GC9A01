@@ -22,6 +22,7 @@
 #include "ble/GattServer.h"
 #include "ble/BLE.h"
 #include "CurrentTimeService.h"
+#include "NotificationManager.h"
 
 extern "C"{
   #include "SEGGER_RTT.h"
@@ -35,7 +36,7 @@ namespace Mytime {
     class SystemTask;
   }
   namespace Controllers {
-    class NotificationManager;
+    // class NotificationManager;
 
     class AlertNotificationService {
             typedef AlertNotificationService Self;
@@ -43,9 +44,9 @@ namespace Mytime {
         AlertNotificationService(Mytime::Controllers::NotificationManager &notificationManager) :
             _ansValue(0),
             // _currentTimeCharacteristic(GattCharacteristic::UUID_CURRENT_TIME_CHAR, 0),
-            // _answerCharacteristic(UUID(_answerCharUuid), nullptr, 0, 0, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE, nullptr, 0, true),
+            _answerCharacteristic(UUID(_answerCharUuid), nullptr, 0, NotificationManager::MessageSize, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
             // _answerCharacteristic(UUID(_answerCharUuid)),
-            _answerCharacteristic(UUID(_answerCharUuid), &_ansValue),
+            // _answerCharacteristic(UUID(_answerCharUuid), &_ansValue),
             // _notificationCharacteristic(UUID(NOTIFICATION_EVENT_SERVICE_UUID_BASE), NULL, 0, 0, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
             // _ct_uuid(ansId),
             // _ct_ans_uuid(ansCharId),
@@ -58,6 +59,7 @@ namespace Mytime {
             _event_queue(NULL),
             _notificationManager(notificationManager)
         {
+            // _answerCharacteristic(UUID(_answerCharUuid), nullptr, 0, NotificationManager::MessageSize, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
             // _charsTable[0] = {&_currentTimeCharacteristic};
             _charsTable[0] = {&_answerCharacteristic};
             // _charsTable[1] = {&_notificationCharacteristic};
@@ -136,10 +138,10 @@ namespace Mytime {
         uint16_t eventHandle;
 
         // NotifyCharacteristic<BLE_DateTime> _notificationCharacteristic;
-        WriteOnlyGattCharacteristic<uint8_t> _answerCharacteristic;
+        // WriteOnlyGattCharacteristic<uint8_t> _answerCharacteristic;
 
         // ReadWriteNotifyIndicateCharacteristic<uint8_t> _answerCharacteristic;
-        // GattCharacteristic _answerCharacteristic;
+        GattCharacteristic _answerCharacteristic;
         // GattCharacteristic _notificationCharacteristic;
         
         // (

@@ -62,60 +62,76 @@ void AlertNotificationService::start(BLE &ble_interface, events::EventQueue &eve
 
 void AlertNotificationService::when_data_written(const GattWriteCallbackParams *e)
 {
-    SEGGER_RTT_printf(0, "data written:\r\n");
+    SEGGER_RTT_printf(0, "AlertNotificationService::when_data_written\r\n");
     SEGGER_RTT_printf(0, "\tconnection handle: %u\r\n", e->connHandle);
     SEGGER_RTT_printf(0, "\tattribute handle: %u\n", e->handle);
 
-    constexpr unsigned int stringTerminatorSize = 1; // end of string '\0'
-    constexpr unsigned int headerSize = 3;
+    if (e->handle == _answerCharacteristic.getValueHandle())
+    {
+        constexpr unsigned int stringTerminatorSize = 1; // end of string '\0'
+        constexpr unsigned int headerSize = 3;
 
-    const auto maxMessageSize{NotificationManager::MaximumMessageSize()};
-    const auto maxBufferSize{maxMessageSize + headerSize};
+        const auto maxMessageSize{NotificationManager::MaximumMessageSize()};
+        const auto maxBufferSize{maxMessageSize + headerSize};
 
-    // BLE_DateTime result;
-    // memcpy(&result, (void *)e->data, (e->len > sizeof(BLE_DateTime) ? sizeof(BLE_DateTime): e->len));
+        SEGGER_RTT_printf(0, "\tmaxBufferSize: %d\n", maxMessageSize + headerSize);
 
-    const auto dbgPacketLen = e->len;
-    unsigned int bufferSize = std::min(dbgPacketLen + stringTerminatorSize, maxBufferSize);
-    auto messageSize = std::min(maxMessageSize, (bufferSize-headerSize));
-    Categories category;
+        // BLE_DateTime result;
+        // memcpy(&result, (void *)e->data, (e->len > sizeof(BLE_DateTime) ? sizeof(BLE_DateTime): e->len));
 
-    NotificationManager::Notification notif;
+        const auto dbgPacketLen = e->len;
+        SEGGER_RTT_printf(0, "\tdbgPacketLen: %d\n", dbgPacketLen);
 
-    memcpy(notif.message.data(), (void *)e->data[headerSize], messageSize-1);
-    memcpy(&category, (void *)e->data, 1);
+        unsigned int bufferSize = std::min(dbgPacketLen + stringTerminatorSize, maxBufferSize);
+        auto messageSize = std::min(maxMessageSize, (bufferSize-headerSize));
 
-    // os_mbuf_copydata(ctxt->om, headerSize, messageSize-1, notif.message.data());
-    // os_mbuf_copydata(ctxt->om, 0, 1, &category);
-    notif.message[messageSize-1] = '\0';
+        SEGGER_RTT_printf(0, "\tbufferSize: %d\n", bufferSize);
+        SEGGER_RTT_printf(0, "\tmessageSize: %d\n", messageSize);
 
-    SEGGER_RTT_printf(0, "category: %d\r\n", category);
+        Categories category;
+        NotificationManager::Notification notif;
 
-    // TODO convert all ANS categories to NotificationController categories
-    switch(category) {
-      case Categories::Call:
-        SEGGER_RTT_printf(0, "IncomingCall\r\n");
-        notif.category = NotificationManager::Categories::IncomingCall;
-        break;
-      default:
-        SEGGER_RTT_printf(0, "SimpleAlert\r\n");
-        notif.category = NotificationManager::Categories::SimpleAlert;
-        break;
+        memcpy(notif.message.data(), (void *)&e->data[headerSize], messageSize - 1);
+        memcpy(&category, (void *)e->data, 1);
+
+        // os_mbuf_copydata(ctxt->om, headerSize, messageSize-1, notif.message.data());
+        // os_mbuf_copydata(ctxt->om, 0, 1, &category);
+        notif.message[messageSize - 1] = '\0';
+
+        for (size_t i = 0; i < notif.message.size(); ++i) {
+            SEGGER_RTT_printf(0, "%02X,", notif.message[i]);
+        }
+
+        SEGGER_RTT_printf(0, "\r\n");
+        SEGGER_RTT_printf(0, "\tcategory: %d\r\n", category);
+
+        // TODO convert all ANS categories to NotificationController categories
+        switch(category) {
+        case Categories::Call:
+            SEGGER_RTT_printf(0, "\tIncomingCall\r\n");
+            notif.category = NotificationManager::Categories::IncomingCall;
+            break;
+        default:
+            SEGGER_RTT_printf(0, "\tSimpleAlert\r\n");
+            notif.category = NotificationManager::Categories::SimpleAlert;
+            break;
+        }
+
+        // auto event = Pinetime::System::SystemTask::Messages::OnNewNotification;
+        // notificationManager.Push(std::move(notif));
+        // systemTask.PushMessage(event);
+
+        SEGGER_RTT_printf(0, "\twrite operation: %u\r\n", e->writeOp);
+        SEGGER_RTT_printf(0, "\toffset: %u\r\n", e->offset);
+        SEGGER_RTT_printf(0, "\tlength: %u\r\n", e->len);
+        SEGGER_RTT_printf(0, "\t data: ");
+
+        for (size_t i = 0; i < e->len; ++i) {
+            SEGGER_RTT_printf(0, "%02X,", e->data[i]);
+        }
+
+        SEGGER_RTT_printf(0, "\r\n");
     }
-
-    // auto event = Pinetime::System::SystemTask::Messages::OnNewNotification;
-    // notificationManager.Push(std::move(notif));
-    // systemTask.PushMessage(event);
-
-    SEGGER_RTT_printf(0, "\twrite operation: %u\r\n", e->writeOp);
-    SEGGER_RTT_printf(0, "\toffset: %u\r\n", e->offset);
-    SEGGER_RTT_printf(0, "\tlength: %u\r\n", e->len);
-    SEGGER_RTT_printf(0, "\t data: ");
-
-    for (size_t i = 0; i < e->len; ++i) {
-        SEGGER_RTT_printf(0, "%02X", e->data[i]);
-    }
-    SEGGER_RTT_printf(0, "\r\n");
 }
 
 // int AlertNotificationService::OnAlert(uint16_t conn_handle, uint16_t attr_handle,

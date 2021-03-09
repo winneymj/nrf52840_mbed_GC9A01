@@ -82,31 +82,34 @@ void CurrentTimeService::when_data_sent(unsigned count)
  */
 void CurrentTimeService::when_data_written(const GattWriteCallbackParams *e)
 {
-    SEGGER_RTT_printf(0, "data written:\r\n");
-    SEGGER_RTT_printf(0, "\tconnection handle: %u\r\n", e->connHandle);
-    SEGGER_RTT_printf(0, "\tattribute handle: %u\n", e->handle);
+    SEGGER_RTT_printf(0, "CurrentTimeService::when_data_written:\r\n");
+    if (e->handle == _currentTimeCharacteristic.getValueHandle())
+    {
+        SEGGER_RTT_printf(0, "\tconnection handle: %u\r\n", e->connHandle);
+        SEGGER_RTT_printf(0, "\tattribute handle: %u\n", e->handle);
 
-    BLE_DateTime result;
-    memcpy(&result, (void *)e->data, (e->len > sizeof(BLE_DateTime) ? sizeof(BLE_DateTime): e->len));
+        BLE_DateTime result;
+        memcpy(&result, (void *)e->data, (e->len > sizeof(BLE_DateTime) ? sizeof(BLE_DateTime): e->len));
 
-    SEGGER_RTT_printf(0, "Received data: %d-%d-%d %d:%d:%d\n", 
-                        result.day, result.month, result.year,
-                        result.hours, result.minutes, result.seconds);
+        SEGGER_RTT_printf(0, "Received data: %d-%d-%d %d:%d:%d\n", 
+                            result.day, result.month, result.year,
+                            result.hours, result.minutes, result.seconds);
 
-    _dateTimeController.SetTime(result.year, result.month, result.day, 0, result.hours, result.minutes, result.seconds);
+        _dateTimeController.SetTime(result.year, result.month, result.day, 0, result.hours, result.minutes, result.seconds);
 
-    SEGGER_RTT_printf(0, "\twrite operation: %u\r\n", e->writeOp);
-    SEGGER_RTT_printf(0, "\toffset: %u\r\n", e->offset);
-    SEGGER_RTT_printf(0, "\tlength: %u\r\n", e->len);
-    SEGGER_RTT_printf(0, "\t data: ");
+        SEGGER_RTT_printf(0, "\twrite operation: %u\r\n", e->writeOp);
+        SEGGER_RTT_printf(0, "\toffset: %u\r\n", e->offset);
+        SEGGER_RTT_printf(0, "\tlength: %u\r\n", e->len);
+        SEGGER_RTT_printf(0, "\t data: ");
 
-    for (size_t i = 0; i < e->len; ++i) {
-        SEGGER_RTT_printf(0, "%02X", e->data[i]);
+        for (size_t i = 0; i < e->len; ++i) {
+            SEGGER_RTT_printf(0, "%02X", e->data[i]);
+        }
+        SEGGER_RTT_printf(0, "\r\n");
+
+        time_t seconds = _dateTimeController.CurrentDateTime();
+        SEGGER_RTT_printf(0, "Time as a basic string = %s\n", ctime(&seconds));
     }
-    SEGGER_RTT_printf(0, "\r\n");
-
-    time_t seconds = _dateTimeController.CurrentDateTime();
-    SEGGER_RTT_printf(0, "Time as a basic string = %s\n", ctime(&seconds));
 }
 
 /**

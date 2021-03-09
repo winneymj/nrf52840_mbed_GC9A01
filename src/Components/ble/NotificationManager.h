@@ -35,7 +35,7 @@ namespace Mytime {
           Id id;
           bool valid = false;
           uint8_t index;
-          std::array<char, MessageSize+1> message;
+          std::array<char, MessageSize + 1> message;
           Categories category = Categories::Unknown;
         };
         Notification::Id nextId {0};
