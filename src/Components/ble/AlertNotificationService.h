@@ -42,27 +42,19 @@ namespace Mytime {
             typedef AlertNotificationService Self;
       public:
         AlertNotificationService(Mytime::Controllers::NotificationManager &notificationManager) :
-            _ansValue(0),
-            // _currentTimeCharacteristic(GattCharacteristic::UUID_CURRENT_TIME_CHAR, 0),
             _answerCharacteristic(UUID(_answerCharUuid), nullptr, 0, NotificationManager::MessageSize, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-            // _answerCharacteristic(UUID(_answerCharUuid)),
-            // _answerCharacteristic(UUID(_answerCharUuid), &_ansValue),
-            // _notificationCharacteristic(UUID(NOTIFICATION_EVENT_SERVICE_UUID_BASE), NULL, 0, 0, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
-            // _ct_uuid(ansId),
-            // _ct_ans_uuid(ansCharId),
+            _notificationEventCharacteristic(UUID(NOTIFICATION_EVENT_SERVICE_UUID_BASE), 0),
             _charsTable(),
             _notification_service(
-                /* uuid */ UUID(_eventServiceId),
-                /* characteristics */ _charsTable,
+                /* uuid */              UUID(_eventServiceId),
+                /* characteristics */   _charsTable,
                 /* numCharacteristics */ sizeof(_charsTable) / sizeof(GattCharacteristic*)),
             _server(NULL),
             _event_queue(NULL),
             _notificationManager(notificationManager)
         {
-            // _answerCharacteristic(UUID(_answerCharUuid), nullptr, 0, NotificationManager::MessageSize, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-            // _charsTable[0] = {&_currentTimeCharacteristic};
             _charsTable[0] = {&_answerCharacteristic};
-            // _charsTable[1] = {&_notificationCharacteristic};
+            _charsTable[1] = {&_notificationEventCharacteristic};
         }
         void Init();
 
@@ -112,64 +104,25 @@ namespace Mytime {
         };
 
         static constexpr UUID::ShortUUIDBytes_t _answerCharUuid {0x2a46};
-        // static constexpr UUID::LongUUIDBytes_t _notificationEventUuid {0xd0, 0x42, 0x19, 0x3a, 0x3b, 0x43, 0x23, 0x8e, 0xfe, 0x48, 0xfc, 0x78, 0x01, 0x00, 0x02, 0x00};
-        // static constexpr UUID::ShortUUIDBytes_t _notificationEventUuid {0x2a46};
         static constexpr UUID::ShortUUIDBytes_t _eventServiceId {0x1811};
         
-        // static constexpr ble_uuid16_t ansUuid {
-        //         .u { .type = BLE_UUID_TYPE_16 },
-        //         .value = ansId
-        // };
-
-        // static constexpr ble_uuid16_t ansCharUuid {
-        //         .u { .type = BLE_UUID_TYPE_16 },
-        //         .value = ansCharId
-        // };
-
-        // static constexpr ble_uuid128_t notificationEventUuid {
-        //         .u { .type = BLE_UUID_TYPE_128 },
-        //         .value = NOTIFICATION_EVENT_SERVICE_UUID_BASE
-        // };
-
-        // struct ble_gatt_chr_def characteristicDefinition[3];
-        // struct ble_gatt_svc_def serviceDefinition[2];
-
-        uint8_t _ansValue;
         uint16_t eventHandle;
 
-        // NotifyCharacteristic<BLE_DateTime> _notificationCharacteristic;
-        // WriteOnlyGattCharacteristic<uint8_t> _answerCharacteristic;
-
-        // ReadWriteNotifyIndicateCharacteristic<uint8_t> _answerCharacteristic;
+        NotifyCharacteristic<uint16_t> _notificationEventCharacteristic;
         GattCharacteristic _answerCharacteristic;
-        // GattCharacteristic _notificationCharacteristic;
-        
-        // (
-        //             /* UUID */ uuid,
-        //             /* Initial value */ (uint8_t *)&_value,
-        //             /* Value size */ sizeof(_value),
-        //             /* Value capacity */ sizeof(_value),
-        //             /* Properties */ GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY,
-        //             /* Descriptors */ NULL,
-        //             /* Num descriptors */ 0,
-        //             /* variable len */ false
-        //         ),
-
 
         UUID _ct_uuid;
         UUID _ct_ans_uuid;
 
-        GattCharacteristic *_charsTable[1];
-        // ReadWriteNotifyIndicateCharacteristic<uint8_t> _currentTimeCharacteristic;
-
-        // demo service
+        GattCharacteristic *_charsTable[2];
         GattService _notification_service;
-
         GattServer* _server;
 
         events::EventQueue *_event_queue;
 
         NotificationManager &_notificationManager;
+
+        uint16_t _eventHandle;
     };
   }
 }

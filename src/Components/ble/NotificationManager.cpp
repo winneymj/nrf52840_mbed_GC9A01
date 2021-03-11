@@ -26,19 +26,29 @@ using namespace Mytime::Controllers;
 constexpr uint8_t NotificationManager::MessageSize;
 
 void NotificationManager::Push(NotificationManager::Notification &&notif) {
-  notif.id = GetNextId();
-  notif.valid = true;
-  notifications[writeIndex] = std::move(notif);
-  writeIndex = (writeIndex + 1 < TotalNbNotifications) ? writeIndex + 1 : 0;
-  if(!empty)
-    readIndex = (readIndex + 1 < TotalNbNotifications) ? readIndex + 1 : 0;
-  else empty = false;
+    SEGGER_RTT_printf(0, "NotificationManager::Push: START\r\n");
 
-  newNotification = true;
+    notif.id = GetNextId();
+    notif.valid = true;
+    _notifications[_writeIndex] = std::move(notif);
+    _writeIndex = (_writeIndex + 1 < TotalNbNotifications) ? _writeIndex + 1 : 0;
+    if(!_empty)
+        _readIndex = (_readIndex + 1 < TotalNbNotifications) ? _readIndex + 1 : 0;
+    else _empty = false;
+
+    SEGGER_RTT_printf(0, "\tnotif.id: %u, valid: %u, index: %u, _writeIndex: %u, _readIndex: %u, notif.category: %u\r\n", notif.id,
+        notif.valid,
+        notif.index,
+        _writeIndex,
+        _readIndex,
+        notif.category);
+
+    _newNotification = true;
+    SEGGER_RTT_printf(0, "NotificationManager::Push: END\r\n");
 }
 
 NotificationManager::Notification NotificationManager::GetLastNotification() {
-  NotificationManager::Notification notification = notifications[readIndex];
+  NotificationManager::Notification notification = _notifications[_readIndex];
   notification.index = 1;
   return notification;
 }
@@ -48,15 +58,15 @@ NotificationManager::Notification::Id NotificationManager::GetNextId() {
 }
 
 NotificationManager::Notification NotificationManager::GetNext(NotificationManager::Notification::Id id) {
-  auto currentIterator = std::find_if(notifications.begin(), notifications.end(), [id](const Notification& n){return n.valid && n.id == id;});
-  if(currentIterator == notifications.end() || currentIterator->id != id) return Notification{};
+  auto currentIterator = std::find_if(_notifications.begin(), _notifications.end(), [id](const Notification& n){return n.valid && n.id == id;});
+  if(currentIterator == _notifications.end() || currentIterator->id != id) return Notification{};
 
-  auto& lastNotification = notifications[readIndex];
+  auto& lastNotification = _notifications[_readIndex];
 
   NotificationManager::Notification result;
 
-  if(currentIterator == (notifications.end()-1))
-    result = *(notifications.begin());
+  if(currentIterator == (_notifications.end()-1))
+    result = *(_notifications.begin());
   else
     result = *(currentIterator+1);
 
@@ -67,15 +77,15 @@ NotificationManager::Notification NotificationManager::GetNext(NotificationManag
 }
 
 NotificationManager::Notification NotificationManager::GetPrevious(NotificationManager::Notification::Id id) {
-  auto currentIterator = std::find_if(notifications.begin(), notifications.end(), [id](const Notification& n){return n.valid && n.id == id;});
-  if(currentIterator == notifications.end() || currentIterator->id != id) return Notification{};
+  auto currentIterator = std::find_if(_notifications.begin(), _notifications.end(), [id](const Notification& n){return n.valid && n.id == id;});
+  if(currentIterator == _notifications.end() || currentIterator->id != id) return Notification{};
 
-  auto& lastNotification = notifications[readIndex];
+  auto& lastNotification = _notifications[_readIndex];
 
   NotificationManager::Notification result;
 
-  if(currentIterator == notifications.begin())
-    result = *(notifications.end()-1);
+  if(currentIterator == _notifications.begin())
+    result = *(_notifications.end()-1);
   else
     result = *(currentIterator-1);
 
@@ -86,23 +96,23 @@ NotificationManager::Notification NotificationManager::GetPrevious(NotificationM
 }
 
 bool NotificationManager::AreNewNotificationsAvailable() {
-  return newNotification;
+  return _newNotification;
 }
 
 bool NotificationManager::IsVibrationEnabled() {
-  return vibrationEnabled;
+  return _vibrationEnabled;
 }
 
 void NotificationManager::ToggleVibrations() {
-  vibrationEnabled = !vibrationEnabled;  
+  _vibrationEnabled = !_vibrationEnabled;  
 }
 
 bool NotificationManager::ClearNewNotificationFlag() {
-//   return newNotification.exchange(false);
-  return newNotification;
+//   return _newNotification.exchange(false);
+  return _newNotification;
 }
 
 size_t NotificationManager::NbNotifications() const {
-  return std::count_if(notifications.begin(), notifications.end(), [](const Notification& n){ return n.valid;});
+  return std::count_if(_notifications.begin(), _notifications.end(), [](const Notification& n){ return n.valid;});
 }
 

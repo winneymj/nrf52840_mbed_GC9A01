@@ -168,7 +168,7 @@ namespace Mytime {
             ble_error_t set(
                 GattServer &server, const T& value, bool local_only = false
             ) const {
-                return server.write(getValueHandle(), &value, sizeof(value), local_only);
+                return server.write(getValueHandle(), (const uint8_t *)&value, sizeof(value), local_only);
             }
 
         private:

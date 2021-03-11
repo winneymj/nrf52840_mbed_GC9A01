@@ -33,7 +33,7 @@ using mbed::callback;
 
 void CurrentTimeService::start(BLE &ble_interface, events::EventQueue &event_queue)
 {
-        if (_event_queue) {
+    if (_event_queue) {
         return;
     }
 
@@ -66,7 +66,7 @@ void CurrentTimeService::start(BLE &ble_interface, events::EventQueue &event_que
     // SEGGER_RTT_printf(0, "\tminute characteristic value handle %u\r\n", _minute_char.getValueHandle());
     // SEGGER_RTT_printf(0, "\tsecond characteristic value handle %u\r\n", _second_char.getValueHandle());
 
-    _event_queue->call_every(1000 /* ms */, callback(this, &Self::increment_second));
+    // _event_queue->call_every(1000 /* ms */, callback(this, &Self::increment_second));
 }
 
 /**
@@ -83,6 +83,9 @@ void CurrentTimeService::when_data_sent(unsigned count)
 void CurrentTimeService::when_data_written(const GattWriteCallbackParams *e)
 {
     SEGGER_RTT_printf(0, "CurrentTimeService::when_data_written:\r\n");
+    SEGGER_RTT_printf(0, "\tconnection handle: %u\r\n", e->connHandle);
+    SEGGER_RTT_printf(0, "\tattribute handle: %u\n", e->handle);
+
     if (e->handle == _currentTimeCharacteristic.getValueHandle())
     {
         SEGGER_RTT_printf(0, "\tconnection handle: %u\r\n", e->connHandle);

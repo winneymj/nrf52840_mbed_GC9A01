@@ -118,7 +118,7 @@ void AlertNotificationService::when_data_written(const GattWriteCallbackParams *
         }
 
         // auto event = Pinetime::System::SystemTask::Messages::OnNewNotification;
-        // notificationManager.Push(std::move(notif));
+        _notificationManager.Push(std::move(notif));
         // systemTask.PushMessage(event);
 
         SEGGER_RTT_printf(0, "\twrite operation: %u\r\n", e->writeOp);
@@ -169,41 +169,62 @@ void AlertNotificationService::when_data_written(const GattWriteCallbackParams *
 //   return 0;
 // }
 
-void AlertNotificationService::AcceptIncomingCall() {
-//   auto response = IncomingCallResponses::Answer;
-//   auto *om = ble_hs_mbuf_from_flat(&response, 1);
+void AlertNotificationService::AcceptIncomingCall()
+{
+    SEGGER_RTT_printf(0, "AlertNotificationService::AcceptIncomingCall\r\n");
+    const uint16_t response = (uint16_t)IncomingCallResponses::Answer;
 
-//   uint16_t connectionHandle = systemTask.nimble().connHandle();
+    GattAttribute::Handle_t connectionHandle = _notificationEventCharacteristic.getValueHandle();
 
-//   if (connectionHandle == 0 || connectionHandle == BLE_HS_CONN_HANDLE_NONE) {
-//     return;
-//   }
+    if (connectionHandle == GattAttribute::INVALID_HANDLE)
+    {
+        return;
+    }
 
-//   ble_gattc_notify_custom(connectionHandle, eventHandle, om);
+    ble_error_t err = _notificationEventCharacteristic.set(*_server, response);
+    if (err)
+    {
+        SEGGER_RTT_printf(0, "write of the AcceptIncomingCall value returned error %u\r\n", err);
+        return;
+    }
 }
 
-void AlertNotificationService::RejectIncomingCall() {
-//   auto response = IncomingCallResponses::Reject;
-//   auto *om = ble_hs_mbuf_from_flat(&response, 1);
+void AlertNotificationService::RejectIncomingCall()
+{
+    SEGGER_RTT_printf(0, "AlertNotificationService::RejectIncomingCall\r\n");
+    const uint16_t response = (uint16_t)IncomingCallResponses::Reject;
 
-//   uint16_t connectionHandle = systemTask.nimble().connHandle();
+    GattAttribute::Handle_t connectionHandle = _notificationEventCharacteristic.getValueHandle();
 
-//   if (connectionHandle == 0 || connectionHandle == BLE_HS_CONN_HANDLE_NONE) {
-//     return;
-//   }
+    if (connectionHandle == GattAttribute::INVALID_HANDLE)
+    {
+        return;
+    }
 
-//   ble_gattc_notify_custom(connectionHandle, eventHandle, om);
+    ble_error_t err = _notificationEventCharacteristic.set(*_server, response);
+    if (err)
+    {
+        SEGGER_RTT_printf(0, "write of the AcceptIncomingCall value returned error %u\r\n", err);
+        return;
+    }
 }
 
-void AlertNotificationService::MuteIncomingCall() {
-//   auto response = IncomingCallResponses::Mute;
-//   auto *om = ble_hs_mbuf_from_flat(&response, 1);
+void AlertNotificationService::MuteIncomingCall()
+{
+    SEGGER_RTT_printf(0, "AlertNotificationService::MuteIncomingCall\r\n");
+    const uint16_t response = (uint16_t)IncomingCallResponses::Mute;
 
-//   uint16_t connectionHandle = systemTask.nimble().connHandle();
+    GattAttribute::Handle_t connectionHandle = _notificationEventCharacteristic.getValueHandle();
 
-//   if (connectionHandle == 0 || connectionHandle == BLE_HS_CONN_HANDLE_NONE) {
-//     return;
-//   }
+    if (connectionHandle == GattAttribute::INVALID_HANDLE)
+    {
+        return;
+    }
 
-//   ble_gattc_notify_custom(connectionHandle, eventHandle, om);
+    ble_error_t err = _notificationEventCharacteristic.set(*_server, response);
+    if (err)
+    {
+        SEGGER_RTT_printf(0, "write of the AcceptIncomingCall value returned error %u\r\n", err);
+        return;
+    }
 }

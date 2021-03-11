@@ -55,13 +55,13 @@ namespace Mytime {
       private:
         Notification::Id GetNextId();
         static constexpr uint8_t TotalNbNotifications = 5;
-        std::array<Notification, TotalNbNotifications> notifications;
-        uint8_t readIndex = 0;
-        uint8_t writeIndex = 0;
-        bool empty = true;
-        // std::atomic<bool> newNotification{false};
-        bool newNotification{false};
-        bool vibrationEnabled = true;
+        std::array<Notification, TotalNbNotifications> _notifications;
+        uint8_t _readIndex = 0;
+        uint8_t _writeIndex = 0;
+        bool _empty = true;
+        // std::atomic<bool> _newNotification{false};
+        bool _newNotification{false};
+        bool _vibrationEnabled = true;
     };
   }
 }
