@@ -31,6 +31,8 @@ extern "C"{
   #include "SEGGER_RTT.h"
 }
 
+using namespace Mytime::Controllers;
+
 /**
  * Handle initialization and shutdown of the BLE Instance.
  *
@@ -71,9 +73,9 @@ void BLEProcess::start()
         return;
     }
 
-    SEGGER_RTT_printf(0, "BLEProcess::start: dispatch_forever()\r\n");
-    // Process the event queue.
-    _event_queue.dispatch_forever();
+    // SEGGER_RTT_printf(0, "BLEProcess::start: dispatch_forever()\r\n");
+    // // Process the event queue.
+    // _event_queue.dispatch_forever();
 
     return;
 }

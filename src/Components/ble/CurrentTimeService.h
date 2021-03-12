@@ -179,7 +179,7 @@ namespace Mytime {
             typedef CurrentTimeService Self;
 
         public:
-            CurrentTimeService(DateTime &dateTimeController) :
+            CurrentTimeService(DateTimeController &dateTimeController) :
                 _currentTimeCharacteristic(GattCharacteristic::UUID_CURRENT_TIME_CHAR, {0}),
                 _ct_uuid(GattService::UUID_CURRENT_TIME_SERVICE),
                 _charsTable(),
@@ -296,7 +296,7 @@ namespace Mytime {
 
             events::EventQueue *_event_queue;
 
-            DateTime &_dateTimeController;
+            DateTimeController &_dateTimeController;
         };
     }
 }

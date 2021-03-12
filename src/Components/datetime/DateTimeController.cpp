@@ -27,7 +27,7 @@ extern "C"{
 using namespace Mytime::Controllers;
 
 
-void DateTime::SetTime(uint16_t year, uint8_t month, uint8_t day,
+void DateTimeController::SetTime(uint16_t year, uint8_t month, uint8_t day,
                         uint8_t dayOfWeek, uint8_t hour, uint8_t minute,
                         uint8_t second) {
   struct tm tm = {
@@ -52,7 +52,7 @@ void DateTime::SetTime(uint16_t year, uint8_t month, uint8_t day,
   SEGGER_RTT_printf(0, "%d:%d:%d \n ", hour, minute, second);
 }
 
-time_t DateTime::CurrentDateTime()
+time_t DateTimeController::CurrentDateTime()
 {
   return time(NULL);
 }

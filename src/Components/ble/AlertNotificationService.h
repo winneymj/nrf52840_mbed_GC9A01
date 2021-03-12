@@ -108,8 +108,8 @@ namespace Mytime {
         
         uint16_t eventHandle;
 
-        NotifyCharacteristic<uint16_t> _notificationEventCharacteristic;
         GattCharacteristic _answerCharacteristic;
+        NotifyCharacteristic<uint16_t> _notificationEventCharacteristic;
 
         UUID _ct_uuid;
         UUID _ct_ans_uuid;
