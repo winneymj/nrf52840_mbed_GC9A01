@@ -30,6 +30,7 @@
 #include <lvgl/lvgl.h>
 #include <lv_drivers/display/GC9A01.h>
 #include <bma423_main.h>
+#include "WatchAPI.h"
 
 extern "C"{
   #include "SEGGER_RTT.h"
@@ -251,6 +252,9 @@ int main()
     lvgl_init();
 
 	// GC9A01_fillScreen(WHITE_COLOUR);
+
+    Mytime::Controllers::WatchAPI watchFace(event_queue);
+    watchFace.main();
 
     SEGGER_RTT_printf(0, "main: dispatch_forever()\r\n");
     // Process the event queue.

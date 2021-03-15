@@ -117,7 +117,8 @@
 #define MBED_CONF_NANOSTACK_HAL_NVM_CFSTORE                                   0                                                                                                // set by library:nanostack-hal
 #define MBED_CONF_NORDIC_NRF_LF_CLOCK_CALIB_MODE_CONFIG                       0                                                                                                // set by target:MCU_NRF52832
 #define MBED_CONF_NORDIC_NRF_LF_CLOCK_CALIB_TIMER_INTERVAL                    16                                                                                               // set by target:MCU_NRF52832
-#define MBED_CONF_NORDIC_NRF_LF_CLOCK_SRC                                     NRF_LF_SRC_XTAL                                                                                  // set by target:MCU_NRF52832
+// #define MBED_CONF_NORDIC_NRF_LF_CLOCK_SRC                                     NRF_LF_SRC_XTAL                                                                               // set by target:MCU_NRF52832
+#define MBED_CONF_NORDIC_NRF_LF_CLOCK_SRC                                     NRF_LF_SRC_SYNTH                                                                                  // set by target:MCU_NRF52832
 #define MBED_CONF_NORDIC_UART_0_FIFO_SIZE                                     32                                                                                               // set by library:nordic
 #define MBED_CONF_NORDIC_UART_1_FIFO_SIZE                                     32                                                                                               // set by library:nordic
 #define MBED_CONF_NORDIC_UART_DMA_SIZE                                        8                                                                                                // set by library:nordic

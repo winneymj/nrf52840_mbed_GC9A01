@@ -16,6 +16,23 @@
         "mstd_iterator": "cpp",
         "*.tcc": "cpp",
         "cstdlib": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "condition_variable": "cpp",
+        "ctime": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "rtc_api.h": "c",
+        "nrf_rtc.h": "c",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "initializer_list": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "sstream": "cpp",
+        "functional": "cpp",
+        "type_traits": "cpp",
+        "tuple": "cpp",
+        "mstd_mutex": "cpp"
     }
 }
