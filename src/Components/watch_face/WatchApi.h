@@ -25,9 +25,25 @@ extern "C"{
   #include "SEGGER_RTT.h"
 }
 
-static void main_window_load(/*Window *window*/)
+
+static Mytime::Windows::Window* s_main_window;
+static TextLayer *s_time_layer;
+
+static void main_window_load(Mytime::Windows::Window* w)
 {
     SEGGER_RTT_printf(0, "main_window_load START\n\r");
+
+    // Create the TextLayer with specific bounds
+    GRect bounds = GRect(0, 100, 249, 175);
+    s_time_layer = text_layer_create(w, bounds);
+
+    // Improve the layout to be more like a watchface
+    text_layer_set_background_color(s_time_layer, LV_COLOR_BLUE);
+    text_layer_set_text_color(s_time_layer, LV_COLOR_BLACK);
+    text_layer_set_text(s_time_layer, "00:00");
+    text_layer_set_font(s_time_layer, &lv_font_montserrat_18);
+    text_layer_set_text_alignment(s_time_layer, LV_ALIGN_CENTER);
+
     SEGGER_RTT_printf(0, "main_window_load EXIT\n\r");
 }
 
@@ -36,8 +52,6 @@ static void main_window_unload(/*Window *window*/)
     SEGGER_RTT_printf(0, "main_window_unload START\n\r");
     SEGGER_RTT_printf(0, "main_window_unload EXIT\n\r");
 }
-
-static Mytime::Windows::Window* s_main_window;
 
 namespace Mytime {
     namespace Controllers {
@@ -55,7 +69,7 @@ namespace Mytime {
 
                 s_main_window = window_create();
 
-                window_set_window_handlers(s_main_window, (WindowHandlers)
+                window_set_window_handlers(s_main_window, (Mytime::Windows::WindowHandlers)
                 {
                     .load = mbed::callback(&main_window_load),
                     .unload = mbed::callback(&main_window_unload)
@@ -69,7 +83,7 @@ namespace Mytime {
             void deinit()
             {
                 SEGGER_RTT_printf(0, "WatchAPI:init START\n\r");
-                delete s_main_window;
+                window_destroy(s_main_window);
                 SEGGER_RTT_printf(0, "WatchAPI:init EXIT\n\r");
             };
 
