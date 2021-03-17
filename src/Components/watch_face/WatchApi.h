@@ -50,7 +50,36 @@ static void main_window_load(Mytime::Windows::Window* w)
 static void main_window_unload(/*Window *window*/)
 {
     SEGGER_RTT_printf(0, "main_window_unload START\n\r");
+    tick_timer_service_unsubscribe();
     SEGGER_RTT_printf(0, "main_window_unload EXIT\n\r");
+}
+
+static void update_time()
+{
+    SEGGER_RTT_printf(0, "update_time START\n\r");
+    // Get a tm structure
+    time_t temp = time(NULL);
+    struct tm *tick_time = localtime(&temp);
+
+    // Write the current hours and minutes into a buffer
+    static char s_buffer[8];
+    // strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ?
+    //                                         "%H:%M" : "%I:%M", tick_time);
+    strftime(s_buffer, sizeof(s_buffer), "%H:%M", tick_time);
+
+    SEGGER_RTT_printf(0, "update_time s_buffer=%s\n\r", s_buffer);
+
+    // Display this time on the TextLayer
+    text_layer_set_text(s_time_layer, s_buffer);
+
+    SEGGER_RTT_printf(0, "update_time EXIT\n\r");
+}
+
+static void tick_handler(struct tm *tick_time, Mytime::Windows::TimeUnits units_changed)
+{
+    SEGGER_RTT_printf(0, "tick_handler, units_changed=%d START\n\r", units_changed);
+    update_time();
+    SEGGER_RTT_printf(0, "tick_handler EXIT\n\r");
 }
 
 namespace Mytime {
@@ -76,6 +105,9 @@ namespace Mytime {
                 });
 
                 window_stack_push(s_main_window);
+
+                // Register with TickTimerService
+                tick_timer_service_subscribe(Mytime::Windows::MINUTE_UNIT, &tick_handler);
 
                 SEGGER_RTT_printf(0, "WatchAPI:init EXIT\n\r");
             };

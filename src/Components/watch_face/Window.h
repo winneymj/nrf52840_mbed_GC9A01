@@ -66,6 +66,15 @@ Called when the window is deinited, but could be used in the future to free reso
 namespace Mytime {
     namespace Windows {
 
+enum TimeUnits {
+    SECOND_UNIT = 1000,
+    MINUTE_UNIT = 60000,
+    HOUR_UNIT = 36000,
+    DAY_UNIT,
+    MONTH_UNIT,
+    YEAR_UNIT
+};
+
 class Window;
 
 typedef struct {
@@ -143,8 +152,8 @@ TextLayer* text_layer_create(Mytime::Windows::Window *parent_window, GRect &rect
 {
     // Create page style
     static lv_style_t style_page;
-    lv_style_set_bg_color(&style_page, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-    // lv_style_set_border_width(&style_page, LV_STATE_DEFAULT, 1);
+    lv_style_set_bg_color(&style_page, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_border_width(&style_page, LV_STATE_DEFAULT, 0);
     // lv_style_set_border_color(&style_page, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 
     // lv_style_copy(&style_page, &style_background);
@@ -157,6 +166,7 @@ TextLayer* text_layer_create(Mytime::Windows::Window *parent_window, GRect &rect
     // lv_obj_align(page, NULL, LV_ALIGN_IN_TOP_MID, 0, 40);
     lv_obj_set_width(page, rect.width());
     lv_obj_set_height(page, rect.height());
+    lv_obj_align(page, NULL, LV_ALIGN_CENTER, 0, 0);
 
     /*Create a label on the page*/
     lv_obj_t* label = lv_label_create(page, NULL);
@@ -195,8 +205,9 @@ void text_layer_set_background_color(TextLayer *tl, lv_color_t color)
 {
     // Fill base rectangle with yellow
     static lv_style_t style_background;
-    lv_style_set_bg_color(&style_background, LV_STATE_DEFAULT, color);
+    lv_style_init(&style_background);
 
+    lv_style_set_bg_color(&style_background, LV_STATE_DEFAULT, color);
     lv_obj_add_style(tl, LV_OBJ_PART_MAIN, &style_background);
 }
 
@@ -204,8 +215,9 @@ void text_layer_set_text_color(TextLayer *tl, lv_color_t color)
 {
     // Fill base rectangle with yellow
     static lv_style_t style_text_color;
-    lv_style_set_text_color(&style_text_color, LV_STATE_DEFAULT, color);
+    lv_style_init(&style_text_color);
 
+    lv_style_set_text_color(&style_text_color, LV_STATE_DEFAULT, color);
     lv_obj_add_style(tl, LV_OBJ_PART_MAIN, &style_text_color);
 }
 
@@ -217,6 +229,8 @@ void text_layer_set_text(TextLayer *tl, const char *txt)
 void text_layer_set_font(TextLayer *tl, const lv_font_t *fnt)
 {
     static lv_style_t style_set_font;
+    lv_style_init(&style_set_font);
+
     lv_style_set_text_font(&style_set_font, LV_STATE_DEFAULT, fnt);
     lv_obj_add_style(tl, LV_OBJ_PART_MAIN, &style_set_font);
 }
@@ -226,5 +240,43 @@ void text_layer_set_text_alignment(TextLayer *tl, lv_align_t align)
     lv_obj_align(tl, NULL, align, 0, 0);
 }
 
+extern events::EventQueue event_queue;
+
+static int tick_instance = -1;
+
+void intermediate_ticker(mbed::Callback<void(struct tm *, Mytime::Windows::TimeUnits)> handler, Mytime::Windows::TimeUnits time_unit)
+{
+    SEGGER_RTT_printf(0, "intermediate_ticker START\n\r");
+    time_t seconds = time(NULL);
+    struct tm *current_time;
+    current_time = localtime(&seconds);
+
+    handler(current_time, time_unit);
+    SEGGER_RTT_printf(0, "intermediate_ticker EXIT\n\r");
+}
+
+void tick_timer_service_unsubscribe(void)
+{
+    SEGGER_RTT_printf(0, "tick_timer_service_unsubscribe START\n\r");
+    if (tick_instance != -1)
+    {
+        event_queue.cancel(tick_instance);
+        tick_instance = -1;
+    }
+    SEGGER_RTT_printf(0, "tick_timer_service_unsubscribe EXIT\n\r");
+}
+
+void tick_timer_service_subscribe(Mytime::Windows::TimeUnits time_unit, mbed::Callback<void(struct tm *, Mytime::Windows::TimeUnits)> handler)
+{
+    SEGGER_RTT_printf(0, "tick_timer_service_subscribe START\n\r");
+    // TODO - think need an array to tick_instances so we can 
+    if (tick_instance != -1)
+    {
+        tick_timer_service_unsubscribe();
+    }
+
+    tick_instance = event_queue.call_every(time_unit, mbed::callback(&intermediate_ticker), handler, time_unit);
+    SEGGER_RTT_printf(0, "tick_timer_service_subscribe EXIT\n\r");
+}
 
 #endif /* __WINDOW_API_H__ */
