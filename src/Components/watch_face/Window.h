@@ -27,6 +27,9 @@ extern "C"{
 }
 
 #define TextLayer lv_obj_t
+#define GFont lv_font_t
+
+extern events::EventQueue app_queue;
 
 class GRect: lv_area_t
 {
@@ -176,7 +179,7 @@ TextLayer* text_layer_create(Mytime::Windows::Window *parent_window, GRect &rect
 
 void window_stack_push(Mytime::Windows::Window* w, bool animate = false)
 {
-    SEGGER_RTT_printf(0, "window_stack_push START\n\r");                 
+    SEGGER_RTT_printf(0, "window_stack_push START\r\n");                 
     // Push to the top of the stack and call the load handlers
     windows_array[0] = w;
     Mytime::Windows::WindowHandlers handlers = w->getHandlers();
@@ -184,20 +187,24 @@ void window_stack_push(Mytime::Windows::Window* w, bool animate = false)
     {
         handlers.load(w);
     }
-    SEGGER_RTT_printf(0, "window_stack_push EXIT\n\r");                 
+    SEGGER_RTT_printf(0, "window_stack_push EXIT\r\n");                 
 }
 
 Mytime::Windows::Window* window_stack_pop(bool animated)
 {
-    SEGGER_RTT_printf(0, "window_stack_pop START\n\r");
+    // SEGGER_RTT_printf(0, "stack_pop START\r\n");
     // Pop off and call handlers    
+    // Mytime::Windows::Window* w = nullptr;
     Mytime::Windows::Window* w = windows_array[0];
+    // SEGGER_RTT_printf(0, "window_stack_pop w=%0x%x\r\n", w);
     Mytime::Windows::WindowHandlers handlers = w->getHandlers();
+    // SEGGER_RTT_printf(0, "window_stack_pop handlers=%0x%x\r\n", handlers);
+    // SEGGER_RTT_printf(0, "window_stack_pop handlers.unload=%0x%x\r\n", handlers.unload);
     if (handlers.unload)
     {
         handlers.unload();
     }
-    SEGGER_RTT_printf(0, "window_stack_pop EXIT\n\r");
+    // SEGGER_RTT_printf(0, "stack_pop EXIT\r\n");
     return w;
 }
 
@@ -240,43 +247,57 @@ void text_layer_set_text_alignment(TextLayer *tl, lv_align_t align)
     lv_obj_align(tl, NULL, align, 0, 0);
 }
 
-extern events::EventQueue event_queue;
+// extern events::EventQueue event_queue;
 
 static int tick_instance = -1;
 
 void intermediate_ticker(mbed::Callback<void(struct tm *, Mytime::Windows::TimeUnits)> handler, Mytime::Windows::TimeUnits time_unit)
 {
-    SEGGER_RTT_printf(0, "intermediate_ticker START\n\r");
+    SEGGER_RTT_printf(0, "it E\r\n");
     time_t seconds = time(NULL);
     struct tm *current_time;
     current_time = localtime(&seconds);
 
     handler(current_time, time_unit);
-    SEGGER_RTT_printf(0, "intermediate_ticker EXIT\n\r");
+    SEGGER_RTT_printf(0, "it X\r\n");
 }
 
 void tick_timer_service_unsubscribe(void)
 {
-    SEGGER_RTT_printf(0, "tick_timer_service_unsubscribe START\n\r");
+    SEGGER_RTT_printf(0, "ttsu E\r\n");
     if (tick_instance != -1)
     {
-        event_queue.cancel(tick_instance);
+        app_queue.cancel(tick_instance);
         tick_instance = -1;
     }
-    SEGGER_RTT_printf(0, "tick_timer_service_unsubscribe EXIT\n\r");
+    SEGGER_RTT_printf(0, "ttsu X\r\n");
 }
 
 void tick_timer_service_subscribe(Mytime::Windows::TimeUnits time_unit, mbed::Callback<void(struct tm *, Mytime::Windows::TimeUnits)> handler)
 {
-    SEGGER_RTT_printf(0, "tick_timer_service_subscribe START\n\r");
+    SEGGER_RTT_printf(0, "ttss E\n\r");
     // TODO - think need an array to tick_instances so we can 
     if (tick_instance != -1)
     {
         tick_timer_service_unsubscribe();
     }
 
-    tick_instance = event_queue.call_every(time_unit, mbed::callback(&intermediate_ticker), handler, time_unit);
-    SEGGER_RTT_printf(0, "tick_timer_service_subscribe EXIT\n\r");
+    tick_instance = app_queue.call_every(time_unit, mbed::callback(&intermediate_ticker), handler, time_unit);
+    SEGGER_RTT_printf(0, "ttss X\n\r");
+}
+
+GFont* fonts_load_custom_font(const char *file_path)
+{
+    // Note that to load a font LVGL's filesystem needs to be enabled and a driver needs to be added.
+    // lv_font_t * my_font;
+    // my_font = lv_font_load(file_path);
+
+    return nullptr;
+}
+
+void fonts_unload_custom_font(GFont* my_font)
+{
+    // lv_font_free(my_font);    
 }
 
 #endif /* __WINDOW_API_H__ */

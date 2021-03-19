@@ -22,6 +22,7 @@ extern "C"{
 }
 
 using namespace Mytime::Controllers;
+void notificationHandler();
 
 void AlertNotificationService::start(BLE &ble_interface, events::EventQueue &event_queue)
 {
@@ -119,7 +120,9 @@ void AlertNotificationService::when_data_written(const GattWriteCallbackParams *
 
         // auto event = Pinetime::System::SystemTask::Messages::OnNewNotification;
         _notificationManager.Push(std::move(notif));
-        // systemTask.PushMessage(event);
+
+        // Push a notification to the queue to notify user
+        _event_queue->call(mbed::callback(&notificationHandler));
 
         SEGGER_RTT_printf(0, "\twrite operation: %u\r\n", e->writeOp);
         SEGGER_RTT_printf(0, "\toffset: %u\r\n", e->offset);

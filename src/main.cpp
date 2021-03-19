@@ -40,14 +40,17 @@ extern "C"{
 // 5 milliseconds (5000 microseconds)
 #define TICKER_TIME 1000 * LVGL_TICK
 
-events::EventQueue event_queue;
+extern events::EventQueue app_queue;
+events::EventQueue* queue = mbed_event_queue();
+
+Thread t;
 
 BLE &ble_interface{BLE::Instance()};
 Mytime::Controllers::DateTimeController date_time_controller;
 Mytime::Controllers::NotificationManager notification_manager;
 Mytime::Controllers::CurrentTimeService current_time_service(date_time_controller);
 Mytime::Controllers::AlertNotificationService alert_notification_service(notification_manager);
-Mytime::Controllers::BLEProcess ble_process(event_queue, ble_interface);
+Mytime::Controllers::BLEProcess ble_process(*queue, ble_interface);
 mbed::Callback<void(BLE&, events::EventQueue&)> post_init_cb[] = {
     callback(&current_time_service, &Mytime::Controllers::CurrentTimeService::start),
     callback(&alert_notification_service, &Mytime::Controllers::AlertNotificationService::start),
@@ -130,12 +133,33 @@ lv_area_t get_bounds(const lv_obj_t *obj) {
   return cords_p;
 }
 
-void eventcb() {
+void eventcb()
+{
   // printf("eventcb()\r\n");
   //Call lv_task_handler() periodically every few milliseconds. 
   //It will redraw the screen if required, handle input devices etc.  
   lv_task_handler();
 }
+
+void notificationHandler()
+{
+  SEGGER_RTT_printf(0, "notificationHandler: ENTER\r\n");
+  Mytime::Controllers::NotificationManager::Notification notif = notification_manager.GetLastNotification();
+  SEGGER_RTT_printf(0, "\tnotificationHandler: size=%d\r\n", notif.message.size());
+
+  SEGGER_RTT_printf(0, "\t");
+  for (size_t i = 0; i < 10/*notif.message.size()*/; ++i)
+  {
+    SEGGER_RTT_printf(0, "%02X,", notif.message[i]);
+  }
+  SEGGER_RTT_printf(0, "\r\n");
+
+  SEGGER_RTT_printf(0, "\tbreak watchface dispatch\r\n");
+  app_queue.break_dispatch();
+
+  SEGGER_RTT_printf(0, "notificationHandler: EXIT\r\n");
+}
+
 
 void window_load() {
   // Get default display
@@ -147,7 +171,7 @@ void window_load() {
   lv_obj_add_style(screen, LV_OBJ_PART_MAIN, &style_screen);
 
   // Get the bounds of the screen
-  lv_area_t bounds = get_bounds(screen);
+  // lv_area_t bounds = get_bounds(screen);
 
   // Create background object base rectangle
   s_background_obj = lv_obj_create(screen, NULL);
@@ -177,7 +201,7 @@ void window_load() {
   // Create page style
   static lv_style_t style_page;
   lv_style_copy(&style_page, &style_background);
-  lv_style_set_text_font(&style_page, LV_STATE_DEFAULT, &lv_font_montserrat_18);  /*Set a larger font*/
+  lv_style_set_text_font(&style_page, LV_STATE_DEFAULT, &lv_font_montserrat_36);  /*Set a larger font*/
   lv_style_set_border_width(&style_page, LV_STATE_DEFAULT, 0);
 
   // Create a page
@@ -227,9 +251,9 @@ void lvgl_init()
     printf("main: ticker.attach() done\r\n");
 
     // Set callback for lv_task_handler to redraw the screen if necessary
-    event_queue.call_every(5, mbed::callback(&eventcb));
+    queue->call_every(5, mbed::callback(&eventcb));
 
-    window_load();
+    // window_load();
 }
 
 int main()
@@ -251,14 +275,17 @@ int main()
     // Display graphics init
     lvgl_init();
 
+
+    // When we get a notification we need to notify a method
+
 	// GC9A01_fillScreen(WHITE_COLOUR);
 
-    Mytime::Controllers::WatchAPI watchFace(event_queue);
-    watchFace.main();
+    Mytime::Controllers::WatchAPI watchFace;
+    t.start(mbed::callback(&watchFace, &Mytime::Controllers::WatchAPI::main));
 
-    SEGGER_RTT_printf(0, "main: dispatch_forever()\r\n");
+    SEGGER_RTT_printf(0, "********** main: df() ***********\r\n");
     // Process the event queue.
-    event_queue.dispatch_forever();
+    queue->dispatch_forever();
 
     return 0;
 }
