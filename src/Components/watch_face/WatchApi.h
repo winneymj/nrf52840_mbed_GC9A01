@@ -25,14 +25,14 @@ extern "C"{
   #include "SEGGER_RTT.h"
 }
 
-events::EventQueue app_queue;
+extern events::EventQueue app_queue;
 
 static Mytime::Windows::Window* s_main_window;
 static TextLayer *s_time_layer;
 
 static void main_window_load(Mytime::Windows::Window* w)
 {
-    SEGGER_RTT_printf(0, "mwl E\n\r");
+    SEGGER_RTT_printf(0, "**mwl E\n\r");
 
     // Create the TextLayer with specific bounds
     GRect bounds = GRect(0, 100, 249, 175);
@@ -46,21 +46,21 @@ static void main_window_load(Mytime::Windows::Window* w)
     text_layer_set_font(s_time_layer, &lv_font_montserrat_36);
     text_layer_set_text_alignment(s_time_layer, LV_ALIGN_CENTER);
 
-    SEGGER_RTT_printf(0, "mwl X\n\r");
+    SEGGER_RTT_printf(0, "**mwl X\n\r");
 }
 
 static void main_window_unload(/*Window *window*/)
 {
-    SEGGER_RTT_printf(0, "mwu E\n\r");
+    SEGGER_RTT_printf(0, "**mwu E\n\r");
     // Unsubscribe from timer/Ticker service
     tick_timer_service_unsubscribe();
 
-    SEGGER_RTT_printf(0, "mwu X\n\r");
+    SEGGER_RTT_printf(0, "**mwu X\n\r");
 }
 
 static void update_time()
 {
-    SEGGER_RTT_printf(0, "ut E\r\n");
+    SEGGER_RTT_printf(0, "**ut E\r\n");
     // Get a tm structure
     time_t temp = time(NULL);
     struct tm *tick_time = localtime(&temp);
@@ -69,19 +69,19 @@ static void update_time()
     static char s_buffer[8];
     strftime(s_buffer, sizeof(s_buffer), "%H:%M", tick_time);
 
-    SEGGER_RTT_printf(0, "update_time s_buffer=%s\r\n", s_buffer);
+    // SEGGER_RTT_printf(0, "update_time s_buffer=%s\r\n", s_buffer);
 
     // Display this time on the TextLayer
     text_layer_set_text(s_time_layer, s_buffer);
 
-    SEGGER_RTT_printf(0, "ut X\r\n");
+    SEGGER_RTT_printf(0, "**ut X\r\n");
 }
 
 static void tick_handler(struct tm *tick_time, Mytime::Windows::TimeUnits units_changed)
 {
-    SEGGER_RTT_printf(0, "th E\r\n", units_changed);
+    SEGGER_RTT_printf(0, "**th E\r\n", units_changed);
     update_time();
-    SEGGER_RTT_printf(0, "th X\r\n");
+    SEGGER_RTT_printf(0, "**th X\r\n");
 }
 
 namespace Mytime {
@@ -96,7 +96,7 @@ namespace Mytime {
 
             void init()
             {
-                SEGGER_RTT_printf(0, "wi E\r\n");
+                SEGGER_RTT_printf(0, "**wi E\r\n");
 
                 s_main_window = window_create();
 
@@ -111,26 +111,26 @@ namespace Mytime {
                 // Register with TickTimerService
                 tick_timer_service_subscribe(Mytime::Windows::MINUTE_UNIT, &tick_handler);
 
-                SEGGER_RTT_printf(0, "wi X\r\n");
+                SEGGER_RTT_printf(0, "**wi X\r\n");
             };
 
             void deinit()
             {
-                SEGGER_RTT_printf(0, "wdi E\r\n");
+                SEGGER_RTT_printf(0, "**wdi E\r\n");
                 window_stack_pop(false);
                 window_destroy(s_main_window);
-                SEGGER_RTT_printf(0, "wdi X\r\n");
+                SEGGER_RTT_printf(0, "**wdi X\r\n");
             };
 
             void main()
             {
-                SEGGER_RTT_printf(0, "wm E\r\n");                 
+                SEGGER_RTT_printf(0, "***************wm E\r\n");                 
 
                 init();
                 app_queue.dispatch_forever();
                 deinit();
 
-                SEGGER_RTT_printf(0, "wm X\r\n");                 
+                SEGGER_RTT_printf(0, "***************wm X\r\n");                 
             };
 
         // private:

@@ -238,9 +238,9 @@
 #  define GC9A01_SPI_EXT_CS      0       // 1 = Use CS external to SPI, 0 = CS board managed SPI
 #  define GC9A01_SPI_MODE        2       // Mode 2
 // #  define GC9A01_SPI_BAUD        8000000 // 32Mhz on nrf52840, 8 MHz max on nrf52832
-// #  define GC9A01_SPI_BAUD        16000000 // 32Mhz on nrf52840, 8 MHz max on nrf52832
+#  define GC9A01_SPI_BAUD        16000000 // 32Mhz on nrf52840, 8 MHz max on nrf52832
 // #  define GC9A01_SPI_BAUD        32000000 // 32Mhz on nrf52840, 8 MHz max on nrf52832
-#  define GC9A01_SPI_BAUD        1000000 // 1Mhz on nrf52840, 8 MHz max on nrf52832
+// #  define GC9A01_SPI_BAUD        1000000 // 1Mhz on nrf52840, 8 MHz max on nrf52832
 // #  define GC9A01_SPI_BAUD        200000 // 250kHz on nrf52840, 8 MHz max on nrf52832
 
 #  define GC9A01_LV_COLOR_DEPTH  16      // Fix 16 bit

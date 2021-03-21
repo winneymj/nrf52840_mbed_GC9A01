@@ -31,6 +31,7 @@
 #include <lv_drivers/display/GC9A01.h>
 #include <bma423_main.h>
 #include "WatchAPI.h"
+#include "NotificationDisplay.h"
 
 extern "C"{
   #include "SEGGER_RTT.h"
@@ -40,10 +41,13 @@ extern "C"{
 // 5 milliseconds (5000 microseconds)
 #define TICKER_TIME 1000 * LVGL_TICK
 
-extern events::EventQueue app_queue;
+events::EventQueue app_queue;
 events::EventQueue* queue = mbed_event_queue();
 
-Thread t;
+Thread* t = nullptr;
+
+Mytime::Controllers::WatchAPI watchFace;
+Mytime::Controllers::NotificationDisplay notificationDisplay;
 
 BLE &ble_interface{BLE::Instance()};
 Mytime::Controllers::DateTimeController date_time_controller;
@@ -141,23 +145,72 @@ void eventcb()
   lv_task_handler();
 }
 
+void show_notification()
+{
+  // t->join(); // Make sure thread has terminated
+  if (t != nullptr)
+  {
+    delete t;
+  }
+
+  t = new Thread();
+  t->start(mbed::callback(&notificationDisplay, &Mytime::Controllers::NotificationDisplay::main));
+}
+
+void show_watchface()
+{
+  SEGGER_RTT_printf(0, "sw: E\r\n");
+  // t->join(); // Make sure thread has terminated
+  if (t != nullptr)
+  {
+    delete t;
+  }
+
+  t = new Thread();
+  t->start(mbed::callback(&watchFace, &Mytime::Controllers::WatchAPI::main));
+  SEGGER_RTT_printf(0, "sw: X\r\n");
+}
+
+void break_app_dispatch()
+{
+  SEGGER_RTT_printf(0, "break: E\r\n");
+  app_queue.break_dispatch();
+  SEGGER_RTT_printf(0, "break: bef\r\n");
+  t->join(); // wait for thread to terminate
+  SEGGER_RTT_printf(0, "break: af\r\n");
+
+  // Display notification
+  // queue->call(mbed::callback(&show_notification));
+
+  SEGGER_RTT_printf(0, "break: X\r\n");
+}
+
+void watchHandler()
+{
+  SEGGER_RTT_printf(0, "\twatchHandler E\r\n");
+  app_queue.break_dispatch();
+  queue->call_in(1, mbed::callback(&show_watchface));
+
+  SEGGER_RTT_printf(0, "\twatchHandler X\r\n");
+}
+
 void notificationHandler()
 {
-  SEGGER_RTT_printf(0, "notificationHandler: ENTER\r\n");
-  Mytime::Controllers::NotificationManager::Notification notif = notification_manager.GetLastNotification();
-  SEGGER_RTT_printf(0, "\tnotificationHandler: size=%d\r\n", notif.message.size());
+  SEGGER_RTT_printf(0, "notificationHandler: E\r\n");
+  // Mytime::Controllers::NotificationManager::Notification notif = notification_manager.GetLastNotification();
+  // SEGGER_RTT_printf(0, "\tnotificationHandler: size=%d\r\n", notif.message.size());
 
-  SEGGER_RTT_printf(0, "\t");
-  for (size_t i = 0; i < 10/*notif.message.size()*/; ++i)
-  {
-    SEGGER_RTT_printf(0, "%02X,", notif.message[i]);
-  }
-  SEGGER_RTT_printf(0, "\r\n");
+  // SEGGER_RTT_printf(0, "\t");
+  // for (size_t i = 0; i < 10/*notif.message.size()*/; ++i)
+  // {
+  //   SEGGER_RTT_printf(0, "%02X,", notif.message[i]);
+  // }
+  // SEGGER_RTT_printf(0, "\r\n");
 
-  SEGGER_RTT_printf(0, "\tbreak watchface dispatch\r\n");
   app_queue.break_dispatch();
+  queue->call_in(1, mbed::callback(&show_notification));
 
-  SEGGER_RTT_printf(0, "notificationHandler: EXIT\r\n");
+  SEGGER_RTT_printf(0, "notificationHandler: X\r\n");
 }
 
 
@@ -275,13 +328,22 @@ int main()
     // Display graphics init
     lvgl_init();
 
+    // Display watchface
+    queue->call(mbed::callback(&show_watchface));
+
+    // queue->call(mbed::callback(&watchHandler));
+
+    // Queue notification for 10 seconds to test notification
+    // display
+    queue->call_in(5000, mbed::callback(&notificationHandler));
+
+    // Display watchface
+    // queue->call_in(10000, mbed::callback(&watchHandler));
 
     // When we get a notification we need to notify a method
 
 	// GC9A01_fillScreen(WHITE_COLOUR);
 
-    Mytime::Controllers::WatchAPI watchFace;
-    t.start(mbed::callback(&watchFace, &Mytime::Controllers::WatchAPI::main));
 
     SEGGER_RTT_printf(0, "********** main: df() ***********\r\n");
     // Process the event queue.

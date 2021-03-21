@@ -27,6 +27,7 @@ extern "C"{
 }
 
 #define TextLayer lv_obj_t
+#define GContext lv_obj_t
 #define GFont lv_font_t
 
 extern events::EventQueue app_queue;
@@ -117,14 +118,14 @@ std::array<Mytime::Windows::Window*, 100> windows_array;
 
 void window_set_window_handlers(Mytime::Windows::Window* w, Mytime::Windows::WindowHandlers handlers)
 {
-    SEGGER_RTT_printf(0, "window_set_window_handlers START\n\r");                 
+    SEGGER_RTT_printf(0, "wswh E\r\n");                 
     w->setHandlers(handlers);
-    SEGGER_RTT_printf(0, "window_set_window_handlers EXIT\n\r");                 
+    SEGGER_RTT_printf(0, "wswh X\r\n");                 
 }
 
 Mytime::Windows::Window* window_create()
 {
-    SEGGER_RTT_printf(0, "window_create START\n\r");                 
+    SEGGER_RTT_printf(0, "wc E\r\n");                 
 
     // Get default display
     lv_obj_t *screen = lv_scr_act();
@@ -142,7 +143,7 @@ Mytime::Windows::Window* window_create()
 
     Mytime::Windows::Window* w = new Mytime::Windows::Window(obj);
 
-    SEGGER_RTT_printf(0, "window_create EXIT\n\r");
+    SEGGER_RTT_printf(0, "wc X\r\n");
     return w;
 }
 
@@ -300,4 +301,9 @@ void fonts_unload_custom_font(GFont* my_font)
     // lv_font_free(my_font);    
 }
 
+// void graphics_draw_circle(GContext * ctx, GPoint p, uint16_t radius)
+// {
+//     // Try to create a rectangle
+//     lvgl_obj_create();
+// }
 #endif /* __WINDOW_API_H__ */
