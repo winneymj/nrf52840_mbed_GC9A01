@@ -207,7 +207,7 @@ void notificationHandler()
   // }
   // SEGGER_RTT_printf(0, "\r\n");
 
-  app_queue.break_dispatch();
+  // app_queue.break_dispatch();
   queue->call_in(1, mbed::callback(&show_notification));
 
   SEGGER_RTT_printf(0, "notificationHandler: X\r\n");
@@ -309,9 +309,42 @@ void lvgl_init()
     // window_load();
 }
 
+// void calcChordWidth(int16_t radius)
+// {
+//   SEGGER_RTT_printf(0, "calcChordWidth: E\r\n");
+
+//   uint32_t sqrt_mask;
+//   if(radius <= 32) sqrt_mask = 0x200;
+//   if(radius <= 256) sqrt_mask = 0x800;
+//   else sqrt_mask = 0x8000;
+//   int16_t lineHeight = 5;
+//   char buffer[32] = {0};
+//   float y = radius * 0.90;
+
+//   for (; y > -radius; y -= lineHeight)
+//   {
+//     int16_t h = LV_MATH_ABS(radius - y);
+
+//     sprintf(buffer, "y=%f, h=%d\r\n", y, h);
+//     SEGGER_RTT_printf(0, buffer);
+
+//     // if (y - lineHeight < 0)
+//     // {
+//     //     h += 20;
+//     // }
+
+//     int16_t length = 2 * sqrt(h * (2 * radius - h));
+
+//     SEGGER_RTT_printf(0, "length=%d\r\n", length);
+//   }
+//   SEGGER_RTT_printf(0, "calcChordWidth: X\r\n");
+// }
+
 int main()
 {
     SEGGER_RTT_printf(0, "main: START\r\n");
+
+    // calcChordWidth(100);
 
     // Initalize the display driver GC9A01
     GC9A01_init();
@@ -329,13 +362,12 @@ int main()
     lvgl_init();
 
     // Display watchface
-    queue->call(mbed::callback(&show_watchface));
-
-    // queue->call(mbed::callback(&watchHandler));
+    // queue->call(mbed::callback(&show_watchface));
+    queue->call(mbed::callback(&notificationHandler));
 
     // Queue notification for 10 seconds to test notification
     // display
-    queue->call_in(5000, mbed::callback(&notificationHandler));
+    // queue->call_in(5000, mbed::callback(&notificationHandler));
 
     // Display watchface
     // queue->call_in(10000, mbed::callback(&watchHandler));
